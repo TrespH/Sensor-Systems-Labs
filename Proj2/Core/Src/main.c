@@ -80,6 +80,47 @@ static void MX_TIM1_Init(void);
   * @brief  The application entry point.
   * @retval int
   */
+
+struct Note {
+	int period;
+	int duration;
+};
+
+int playing = 0;
+
+struct Note chorus[30] = {
+		{E4, 4},
+		{E4, 4},
+		{F4, 4},
+		{G4, 4},
+		{G4, 4},
+		{F4, 4},
+		{E4, 4},
+		{D4, 4},
+		{C4, 4},
+		{C4, 4},
+		{D4, 4},
+		{E4, 4},
+		{E4, 6},
+		{D4, 2},
+		{D4, 8},
+		{E4, 4},
+		{E4, 4},
+		{F4, 4},
+		{G4, 4},
+		{G4, 4},
+		{F4, 4},
+		{E4, 4},
+		{D4, 4},
+		{C4, 4},
+		{C4, 4},
+		{D4, 4},
+		{E4, 4},
+		{D4, 6},
+		{C4, 2},
+		{C4, 8}
+	};
+
 void playnote(int period, int duration){
 	  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
 	  TIM_MasterConfigTypeDef sMasterConfig = {0};
@@ -136,58 +177,38 @@ void playnote(int period, int duration){
 	  }
 
 	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+	  //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 	  HAL_Delay(duration*TEMPO);
 	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
+	  //HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
+	  //HAL_Delay(500);
 }
-
-struct Note {
-	int period;
-	int duration;
-};
 
 
 void playsong(struct Note* notes){
+	HAL_GPIO_TogglePin(GPIOA, GPIO_PIN_5);
 	int length = sizeof(notes) / sizeof(notes[0]);
 	for (int i=0; i < length; i++) {
 		playnote(notes[i].period, notes[i].duration);
 	}
+	playing = 0;
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+	 switch(GPIO_Pin) {
+		 case GPIO_PIN_8:
+			 if(playing == 0) {
+				 playing = 1;
+				 //playnote(2000, 10);
+				 playsong(chorus);
+			 }
+			 break;
+		 default: break;
+	 }
 }
 
 int main(void)
 {
-	struct Note notes[120] = {
-			{E4, 4},
-			{E4, 4},
-			{F4, 4},
-			{G4, 4},
-			{G4, 4},
-			{F4, 4},
-			{E4, 4},
-			{D4, 4},
-			{C4, 4},
-			{C4, 4},
-			{D4, 4},
-			{E4, 4},
-			{E4, 6},
-			{D4, 2},
-			{D4, 8},
-			{E4, 4},
-			{E4, 4},
-			{F4, 4},
-			{G4, 4},
-			{G4, 4},
-			{F4, 4},
-			{E4, 4},
-			{D4, 4},
-			{C4, 4},
-			{C4, 4},
-			{D4, 4},
-			{E4, 4},
-			{D4, 6},
-			{C4, 2},
-			{C4, 8}
-
-	};
 
   /* USER CODE BEGIN 1 */
 
@@ -214,11 +235,9 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
-  /*HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
-  HAL_Delay(500);
-  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);*/
 
-  playsong(notes);
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 1, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -299,9 +318,9 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 0;
+  htim1.Init.Prescaler = 99;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 0;
+  htim1.Init.Period = 3206;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -325,7 +344,7 @@ static void MX_TIM1_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
+  sConfigOC.Pulse = 1603;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
@@ -403,11 +422,31 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+
   /*Configure GPIO pin : B1_Pin */
   GPIO_InitStruct.Pin = B1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PA5 */
+  GPIO_InitStruct.Pin = GPIO_PIN_5;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PA8 */
+  GPIO_InitStruct.Pin = GPIO_PIN_8;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 1, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
