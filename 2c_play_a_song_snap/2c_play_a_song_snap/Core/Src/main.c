@@ -161,29 +161,6 @@ static void MX_TIM1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-int flag = 1; 	// 1 -> the song must NOT be played,
-				// 0 -> The board must play the song or it's already playing it
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-
-	switch(GPIO_Pin)
-	{
-		case GPIO_PIN_8:
-
-			flag = 0; 	//Play the song
-
-						//this section will not be seen if song is
-						//currently playing due to microphone lower priority
-
-			break;
-
-		default:
-
-			break;
-	}
-}
-
 void playnote(struct note note_playing){
 
 	  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
@@ -270,9 +247,27 @@ void playsong(){
 	for (int i= 0; i<length; i++){
 		playnote(score[i]);
 	}
-
-	flag = 1; //song finished
 }
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+
+	switch(GPIO_Pin)
+	{
+		case GPIO_PIN_8:
+
+			playsong();	//Play the song
+
+			__HAL_GPIO_EXTI_CLEAR_IT(GPIO_Pin);
+
+			break;
+
+		default:
+
+			break;
+	}
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -313,9 +308,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	if (flag == 0){
-		playsong();
-	}
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */

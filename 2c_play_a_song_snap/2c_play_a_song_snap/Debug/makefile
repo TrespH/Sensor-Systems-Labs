@@ -60,8 +60,8 @@ all: main-build
 main-build: 2c_play_a_song_snap.elf secondary-outputs
 
 # Tool invocations
-2c_play_a_song_snap.elf 2c_play_a_song_snap.map: $(OBJS) $(USER_OBJS) C:\Users\marco\Desktop\Polimi\Materials\Sensor\ Systems\Labs\Lab2\Homework\2c_play_a_song_snap\2c_play_a_song_snap\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "2c_play_a_song_snap.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab2\Homework\2c_play_a_song_snap\2c_play_a_song_snap\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="2c_play_a_song_snap.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+2c_play_a_song_snap.elf 2c_play_a_song_snap.map: $(OBJS) $(USER_OBJS) C:\Users\marco\Desktop\Polimi\Materials\Sensor\ Systems\Labs\Lab2\gruppo_git\Sensor-Systems-Labs\2c_play_a_song_snap\2c_play_a_song_snap\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "2c_play_a_song_snap.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab2\gruppo_git\Sensor-Systems-Labs\2c_play_a_song_snap\2c_play_a_song_snap\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="2c_play_a_song_snap.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
