@@ -1,0 +1,90 @@
+!SESSION 2024-10-01 10:32:58.209 -----------------------------------------------
+eclipse.buildId=Version 1.16.1
+java.version=17.0.11
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_GB
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2024-10-01 10:33:48.671
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2024-10-01 10:33:48.671
+!MESSAGE Log4j2 initialized with config file C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab2\Homework\2c_play_a_song_snap\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2024-10-01 10:33:56.092
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-10-01 10:36:21.478
+!MESSAGE Indexed '2c_play_a_song_snap' (22 sources, 82 headers) in 12.4 sec: 4,763 declarations; 22,640 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0073%)
+!SESSION 2024-10-01 10:40:57.488 -----------------------------------------------
+eclipse.buildId=Version 1.16.1
+java.version=17.0.11
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_GB
+Framework arguments:  C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab2\Homework\2c_play_a_song_snap\2c_play_a_song_snap\.project
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab2\Homework\2c_play_a_song_snap\2c_play_a_song_snap\.project
+
+!ENTRY org.eclipse.core.resources 2 10035 2024-10-01 10:41:14.438
+!MESSAGE The workspace exited with unsaved changes in the previous session; refreshing workspace to recover changes.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2024-10-01 10:41:29.696
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2024-10-01 10:41:29.712
+!MESSAGE Log4j2 initialized with config file C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab2\Homework\2c_play_a_song_snap\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2024-10-01 10:41:37.831
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-10-01 10:42:00.087
+!MESSAGE Indexed '2c_play_a_song_snap' (22 sources, 119 headers) in 11.6 sec: 11,532 declarations; 43,091 references; 1 unresolved inclusions; 92 syntax errors; 240 unresolved names (0.44%)
+
+!ENTRY org.eclipse.cdt.dsf.gdb 4 104 2024-10-01 11:15:58.531
+!MESSAGE Program file does not exist
+!STACK 0
+java.io.FileNotFoundException: C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab2\Homework\2c_play_a_song_snap\2c_play_a_song_snap\Debug\2c_play_a_song_snap.elf not found
+	at org.eclipse.cdt.dsf.gdb.launching.LaunchUtils.verifyProgramPath(LaunchUtils.java:130)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.checkBinaryDetails(GdbLaunchDelegate.java:330)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launchDebugSession(GdbLaunchDelegate.java:152)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launchDebugger(GdbLaunchDelegate.java:109)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launch(GdbLaunchDelegate.java:97)
+	at com.st.stm32cube.ide.mcu.debug.launch.DSFDelegate.launch(DSFDelegate.java:334)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:805)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:716)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin.buildAndLaunch(DebugUIPlugin.java:1040)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin$1.run(DebugUIPlugin.java:1243)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SUBENTRY 1 org.eclipse.cdt.dsf.gdb 4 104 2024-10-01 11:15:58.532
+!MESSAGE C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab2\Homework\2c_play_a_song_snap\2c_play_a_song_snap\Debug\2c_play_a_song_snap.elf not found
+!STACK 0
+java.io.FileNotFoundException: C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab2\Homework\2c_play_a_song_snap\2c_play_a_song_snap\Debug\2c_play_a_song_snap.elf not found
+	at org.eclipse.cdt.dsf.gdb.launching.LaunchUtils.verifyProgramPath(LaunchUtils.java:130)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.checkBinaryDetails(GdbLaunchDelegate.java:330)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launchDebugSession(GdbLaunchDelegate.java:152)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launchDebugger(GdbLaunchDelegate.java:109)
+	at org.eclipse.cdt.dsf.gdb.launching.GdbLaunchDelegate.launch(GdbLaunchDelegate.java:97)
+	at com.st.stm32cube.ide.mcu.debug.launch.DSFDelegate.launch(DSFDelegate.java:334)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:805)
+	at org.eclipse.debug.internal.core.LaunchConfiguration.launch(LaunchConfiguration.java:716)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin.buildAndLaunch(DebugUIPlugin.java:1040)
+	at org.eclipse.debug.internal.ui.DebugUIPlugin$1.run(DebugUIPlugin.java:1243)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
+!SESSION 2024-10-01 13:57:30.409 -----------------------------------------------
+eclipse.buildId=Version 1.16.1
+java.version=17.0.11
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_GB
+Framework arguments:  C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab2\Homework\2c_play_a_song_snap\2c_play_a_song_snap\.project
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab2\Homework\2c_play_a_song_snap\2c_play_a_song_snap\.project
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2024-10-01 13:57:40.745
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2024-10-01 13:57:40.745
+!MESSAGE Log4j2 initialized with config file C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab2\Homework\2c_play_a_song_snap\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2024-10-01 13:57:44.756
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-10-01 13:57:47.156
+!MESSAGE Indexed '2c_play_a_song_snap' (22 sources, 120 headers) in 2.19 sec: 12,740 declarations; 62,298 references; 1 unresolved inclusions; 92 syntax errors; 240 unresolved names (0.32%)
