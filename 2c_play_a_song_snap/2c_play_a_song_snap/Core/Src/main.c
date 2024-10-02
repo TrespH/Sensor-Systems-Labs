@@ -47,7 +47,8 @@ struct note{
 #define _LAD4 1801
 #define _SI4 1699
 
-#define PAUSA 1000000
+#define PAUSA 999999 //PAUSA has been added to add pause and compose more complex songs,
+					 //it has been added also for terminate a song without any sound not to trigger the microphone in loop
 
 #define TEMPO 75
 /* USER CODE END PD */
@@ -65,22 +66,40 @@ UART_HandleTypeDef huart2;
 /* USER CODE BEGIN PV */
 struct note score[]={
 
-		{_MI4, 4},
-		{_FAD4, 4},
+		// --- London Bridge is Falling Down --- //
+
 		{_SOL4, 6},
-
-		{PAUSA, 12},
-
+		{_LA4, 2},
+		{_SOL4, 4},
+		{_FA4, 4},
 		{_MI4, 4},
-		{_FAD4, 4},
-		{_LA4, 6},
+		{_FA4, 4},
+		{_SOL4, 8},
+		{_RE4, 4},
+		{_MI4, 4},
+		{_FA4, 8},
+		{_MI4, 4},
+		{_FA4, 4},
+		{_SOL4, 8},
+		{_SOL4, 6},
+		{_LA4, 2},
+		{_SOL4, 4},
+		{_FA4, 4},
+		{_MI4, 4},
+		{_FA4, 4},
+		{_SOL4, 8},
+		{_RE4, 8},
+		{_SOL4, 8},
+		{_MI4, 4},
+		{_DO4, 12},
 
-		{PAUSA, 4},
+		{PAUSA, 2} //This terminates the song, we put 2 but whatever value is enough to avoid loops
 
-		//uncomment this to play the best song ever
+		// ------------------------------------- //
+
+		// ----------- An other Song ---------- //
+
 		/*
-		 *
-		 *
 		{_MI4, 4},
 		{_FAD4, 4},
 		{_SOL4, 6},
@@ -120,36 +139,12 @@ struct note score[]={
 		{_SOL4, 4},
 		{_FAD4, 8},
 		{_MI4, 4},
-		{_FAD4, 12}
-		*
-		*
+		{_FAD4, 12},
+
+		{PAUSA, 2}
 		*/
 
-		//Prof Song
-		/*{_SOL4, 6},
-		{_LA4, 2},
-		{_SOL4, 4},
-		{_FA4, 4},
-		{_MI4, 4},
-		{_FA4, 4},
-		{_SOL4, 8},
-		{_RE4, 4},
-		{_MI4, 4},
-		{_FA4, 8},
-		{_MI4, 4},
-		{_FA4, 4},
-		{_SOL4, 8},
-		{_SOL4, 6},
-		{_LA4, 2},
-		{_SOL4, 4},
-		{_FA4, 4},
-		{_MI4, 4},
-		{_FA4, 4},
-		{_SOL4, 8},
-		{_RE4, 8},
-		{_SOL4, 8},
-		{_MI4, 4},
-		{_DO4, 12}*/
+		// ------------------------------------- //
 
 };
 /* USER CODE END PV */
@@ -166,14 +161,11 @@ static void MX_TIM1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-#define MICROPHONE_PIN GPIOA, GPIO_PIN_8
-
 int flag = 1; 	// 1 -> the song must NOT be played,
 				// 0 -> The board must play the song or it's already playing it
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
-
 
 	switch(GPIO_Pin)
 	{
@@ -272,6 +264,7 @@ void playnote(struct note note_playing){
 }
 
 void playsong(){
+
 	int length = sizeof(score)/sizeof(score[0]);
 
 	for (int i= 0; i<length; i++){
