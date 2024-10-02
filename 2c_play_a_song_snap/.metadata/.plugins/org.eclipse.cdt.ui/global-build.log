@@ -976,3 +976,25 @@ arm-none-eabi-size  2c_play_a_song_snap.elf
   12440	     80	   1712	  14232	   3798	2c_play_a_song_snap.elf
 Finished building: default.size.stdout
  
+20:11:36 **** Incremental Build of configuration Debug for project 2c_play_a_song_snap ****
+make -j28 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+arm-none-eabi-gcc "../Core/Src/stm32f4xx_hal_msp.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/stm32f4xx_hal_msp.d" -MT"Core/Src/stm32f4xx_hal_msp.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/stm32f4xx_hal_msp.o"
+arm-none-eabi-gcc -o "2c_play_a_song_snap.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab2\Homework\2c_play_a_song_snap\2c_play_a_song_snap\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="2c_play_a_song_snap.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: 2c_play_a_song_snap.elf
+ 
+arm-none-eabi-size  2c_play_a_song_snap.elf 
+arm-none-eabi-objdump -h -S 2c_play_a_song_snap.elf  > "2c_play_a_song_snap.list"
+   text	   data	    bss	    dec	    hex	filename
+  12416	    212	   1716	  14344	   3808	2c_play_a_song_snap.elf
+Finished building: default.size.stdout
+ 
+Finished building: 2c_play_a_song_snap.list
+ 
+20:12:12 **** Incremental Build of configuration Debug for project 2c_play_a_song_snap ****
+make -j28 all 
+arm-none-eabi-size  2c_play_a_song_snap.elf 
+   text	   data	    bss	    dec	    hex	filename
+  12416	    212	   1716	  14344	   3808	2c_play_a_song_snap.elf
+Finished building: default.size.stdout
+ 
