@@ -60,8 +60,8 @@ all: main-build
 main-build: HW_3b_song_without_delay.elf secondary-outputs
 
 # Tool invocations
-HW_3b_song_without_delay.elf HW_3b_song_without_delay.map: $(OBJS) $(USER_OBJS) C:\Users\teopo\Documents\GitHub\Sensor-Systems-Labs\HW_3b_song_without_delay\HW_3b_song_without_delay\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "HW_3b_song_without_delay.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\teopo\Documents\GitHub\Sensor-Systems-Labs\HW_3b_song_without_delay\HW_3b_song_without_delay\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="HW_3b_song_without_delay.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+HW_3b_song_without_delay.elf HW_3b_song_without_delay.map: $(OBJS) $(USER_OBJS) C:\Users\lotto\Desktop\SensonSys\Sensor-Systems-Labs\HW_3b_song_without_delay\HW_3b_song_without_delay\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "HW_3b_song_without_delay.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\lotto\Desktop\SensonSys\Sensor-Systems-Labs\HW_3b_song_without_delay\HW_3b_song_without_delay\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="HW_3b_song_without_delay.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

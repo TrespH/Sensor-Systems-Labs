@@ -161,7 +161,8 @@ static void MX_TIM1_Init(void);
 /* USER CODE BEGIN 0 */
 
 
-int note_playing_flag, current_note_index;
+int note_playing_flag;
+int current_note_index= sizeof(score)/sizeof(score[0]);
 
 
 void playnote(struct note note_playing){
@@ -233,7 +234,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 	switch(GPIO_Pin)
 	{
 		case GPIO_PIN_8:
+
+			if (current_note_index >= sizeof(score)/sizeof(score[0]))
 			playsong();
+
 			__HAL_GPIO_EXTI_CLEAR_IT(GPIO_Pin);
 			break;
 		default: break;
@@ -276,7 +280,7 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT (&htim2);
-provaconflict
+//provaconflict
   /* USER CODE END 2 */
 
   /* Infinite loop */
