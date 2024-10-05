@@ -49,7 +49,7 @@ struct note{
 
 #define PAUSA 999999	//PAUSA has been added to add pause and compose more complex songs,
 						//it has been added also for terminate a song without any sound not to trigger the microphone in loop
-#define TEMPO 40
+#define TEMPO 75
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -440,6 +440,7 @@ static void MX_TIM2_Init(void)
   htim2.Init.Period = TEMPO*10;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
   {
     Error_Handler();
