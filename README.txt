@@ -1,3 +1,3 @@
-2c_play_a_song_snap --> primo esercizio, versione finale
+Lab_3 --> play a song, play a song without delay
 
-HW_3b_song_without_delay --> secondo esercizio,versione senza HAL_Tick
+Lab_4 --> UART with DMA, LCD names

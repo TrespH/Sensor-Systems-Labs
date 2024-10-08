@@ -1,0 +1,40 @@
+!SESSION 2024-10-07 14:59:04.743 -----------------------------------------------
+eclipse.buildId=Version 1.16.1
+java.version=17.0.11
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_GB
+Command-line arguments:  -os win32 -ws win32 -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2024-10-07 14:59:42.049
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2024-10-07 14:59:42.049
+!MESSAGE Log4j2 initialized with config file C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab3\UART_1\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2024-10-07 14:59:51.667
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-10-07 15:03:05.546
+!MESSAGE Indexed 'UART_1' (22 sources, 82 headers) in 8.88 sec: 4,763 declarations; 22,640 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0073%)
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-10-07 16:28:18.651
+!MESSAGE Indexed 'UART_1' (22 sources, 82 headers) in 1.39 sec: 4,766 declarations; 22,649 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0073%)
+!SESSION 2024-10-08 10:08:41.101 -----------------------------------------------
+eclipse.buildId=Version 1.16.1
+java.version=17.0.11
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_GB
+Framework arguments:  C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab3\UART_1\UART_1\.project
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab3\UART_1\UART_1\.project
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2024-10-08 10:08:46.659
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2024-10-08 10:08:46.661
+!MESSAGE Log4j2 initialized with config file C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab3\UART_1\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2024-10-08 10:08:50.727
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-10-08 10:08:52.857
+!MESSAGE Indexed 'UART_1' (22 sources, 120 headers) in 2.04 sec: 12,734 declarations; 62,102 references; 1 unresolved inclusions; 92 syntax errors; 240 unresolved names (0.32%)
