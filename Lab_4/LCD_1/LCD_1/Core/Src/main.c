@@ -59,10 +59,9 @@ static void MX_TIM2_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-#define MEMBERS 5
 #define TEMPO 1000
 
-char *names[MEMBERS] = {
+char *names[] = {
 	"Andre Maffezzini",
 	"Giulio Lotto",
     "Marco La Barbera",
@@ -70,22 +69,34 @@ char *names[MEMBERS] = {
     "Tommaso Majocchi"
 };
 
-int row = 0;
-int name_index = 0;
-int flag_first_round = 0;
+uint8_t MEMBERS = sizeof(names)/sizeof(names[0]);
+
+uint8_t row = 0;
+uint8_t flag_first_round = 0;
+
+int8_t name_index = 0;
 
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
 	if (htim == &htim2) {
+
 		lcd_clear();
+
 		if (flag_first_round == 0) {
-			lcd_println(names[name_index], row+1); // initialize with member 1 on the 2nd row
+
+			lcd_println(names[name_index], row + 1); // initialized with member 1 on the bottom row
 			flag_first_round = 1;
+
 		}
 		else {
-			lcd_println(names[name_index], row);
-			if (name_index == MEMBERS-1) name_index = -1; // reset of name_index
-			lcd_println(names[name_index+1], row+1);
+
+			lcd_println(names[name_index], row); // print old names on top
+
+			if (name_index == MEMBERS-1) 	// if LCD has reached the last name,
+				name_index = -1; 			// reset name_index to -1 to allow row 96 to work properly and put first name on bottom
+
+			lcd_println(names[name_index+1], row + 1); // print new names on bottom
+
 			name_index++;
 		}
 	}
