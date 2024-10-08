@@ -41,7 +41,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim2;
-
 UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_tx;
 
@@ -61,17 +60,17 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#define TEMPO 1000
 
-char string[64];
-
+char buffer[64]; // empty buffer with predefined maximum capacity
 float voltage = 1.5;
 
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
 	if (htim == &htim2) {
 
-		int length = snprintf(string, sizeof(string), "%.3f\n", voltage++);
-		HAL_UART_Transmit_DMA(&huart2, string, length);
+		int length = snprintf(buffer, sizeof(buffer), "%.3f\n", voltage *= 1.2);
+		HAL_UART_Transmit_DMA(&huart2, buffer, length);
 
 	}
 }
@@ -196,7 +195,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 8400 - 1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 10000 -1;
+  htim2.Init.Period = (TEMPO*10) - 1;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)

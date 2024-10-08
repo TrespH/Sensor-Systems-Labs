@@ -60,8 +60,8 @@ all: main-build
 main-build: UART_1.elf secondary-outputs
 
 # Tool invocations
-UART_1.elf UART_1.map: $(OBJS) $(USER_OBJS) C:\Users\marco\Desktop\Polimi\Materials\Sensor\ Systems\Labs\Lab3\UART_1\UART_1\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "UART_1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab3\UART_1\UART_1\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="UART_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+UART_1.elf UART_1.map: $(OBJS) $(USER_OBJS) C:\Users\teopo\Documents\GitHub\Sensor-Systems-Labs\Lab_4\UART_1\UART_1\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "UART_1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\teopo\Documents\GitHub\Sensor-Systems-Labs\Lab_4\UART_1\UART_1\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="UART_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
