@@ -60,8 +60,8 @@ all: main-build
 main-build: LCD_1.elf secondary-outputs
 
 # Tool invocations
-LCD_1.elf LCD_1.map: $(OBJS) $(USER_OBJS) C:\Users\marco\Desktop\Polimi\Materials\Sensor\ Systems\Labs\Lab3\LCD_1\LCD_1\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "LCD_1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\marco\Desktop\Polimi\Materials\Sensor Systems\Labs\Lab3\LCD_1\LCD_1\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="LCD_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+LCD_1.elf LCD_1.map: $(OBJS) $(USER_OBJS) C:\Users\teopo\Documents\GitHub\Sensor-Systems-Labs\Lab_4\LCD_1\LCD_1\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "LCD_1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\teopo\Documents\GitHub\Sensor-Systems-Labs\Lab_4\LCD_1\LCD_1\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="LCD_1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

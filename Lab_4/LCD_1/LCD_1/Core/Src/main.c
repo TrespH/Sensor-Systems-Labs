@@ -41,7 +41,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim2;
-
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
@@ -60,12 +59,15 @@ static void MX_TIM2_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-const char *names[] = {
+#define MEMBERS 5
+#define TEMPO 1000
+
+char *names[MEMBERS] = {
+	"Andre Maffezzini",
+	"Giulio Lotto",
     "Marco La Barbera",
-    "Tommaso Majocchi",
     "Matteo Pompilio",
-    "Andrea Maffezzin",
-	"Giulio Lotto"
+    "Tommaso Majocchi"
 };
 
 int row = 0;
@@ -75,34 +77,17 @@ int flag_first_round = 0;
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
 	if (htim == &htim2) {
-
-			if(name_index == 4){
-
-				lcd_clear();
-				lcd_println(names[4], row);
-				lcd_println(names[0], row+1);
-
-				name_index = 0;
-
-			}
-			else
-			{
-				if(flag_first_round == 0)
-				{
-					lcd_println(names[name_index], row+1); // initialize with member 1
-					flag_first_round = 1;
-				}
-				else
-				{
-					lcd_clear();
-					lcd_println(names[name_index], row);
-					lcd_println(names[name_index+1], row+1);
-
-					name_index++;
-
-				}
-			}
-
+		lcd_clear();
+		if (flag_first_round == 0) {
+			lcd_println(names[name_index], row+1); // initialize with member 1 on the 2nd row
+			flag_first_round = 1;
+		}
+		else {
+			lcd_println(names[name_index], row);
+			if (name_index == MEMBERS-1) name_index = -1; // reset of name_index
+			lcd_println(names[name_index+1], row+1);
+			name_index++;
+		}
 	}
 }
 /* USER CODE END 0 */
@@ -140,10 +125,9 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+
   lcd_initialize();
   lcd_backlight_ON ();
-  lcd_clear();
-
   HAL_TIM_Base_Start_IT (&htim2);
 
   /* USER CODE END 2 */
@@ -226,7 +210,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 8400 - 1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 10000 - 1;
+  htim2.Init.Period = (TEMPO*10) - 1;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
