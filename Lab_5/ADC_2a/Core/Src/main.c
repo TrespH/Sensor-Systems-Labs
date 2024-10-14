@@ -67,8 +67,8 @@ float voltage;
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
 	if (hadc == &hadc1) {
-		  if (HAL_ADC_PollForConversion(&hadc, 10) == HAL_OK) {
-			  int reading = HAL_ADC_GetValue(&hadc);
+		  if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK) {
+			  int reading = HAL_ADC_GetValue(&hadc1);
 			  voltage = reading*3.3/4096.0;
 			  int length = snprintf(buffer, sizeof(buffer), "%.3f\n", voltage);
 			  HAL_UART_Transmit_DMA(&huart2, buffer, length);
