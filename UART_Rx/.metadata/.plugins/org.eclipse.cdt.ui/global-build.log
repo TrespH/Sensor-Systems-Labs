@@ -1,0 +1,63 @@
+11:58:53 **** Incremental Build of configuration Debug for project UART_Rx ****
+make -j28 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'HAL_UART_RxCpltCallback':
+../Core/Src/main.c:76:23: warning: 'sprintf' writing a terminating nul past the end of the destination [-Wformat-overflow=]
+   76 |         sprintf(c, "%c", RxData[0]);
+      |                       ^
+../Core/Src/main.c:76:9: note: 'sprintf' output 2 bytes into a destination of size 1
+   76 |         sprintf(c, "%c", RxData[0]);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "UART_Rx.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\marco\Desktop\git_sensor_local\Sensor-Systems-Labs\Lab_5\UART_Rx\UART_Rx\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="UART_Rx.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: UART_Rx.elf
+ 
+arm-none-eabi-size  UART_Rx.elf 
+arm-none-eabi-objdump -h -S UART_Rx.elf  > "UART_Rx.list"
+   text	   data	    bss	    dec	    hex	filename
+  17180	    132	   2100	  19412	   4bd4	UART_Rx.elf
+Finished building: default.size.stdout
+ 
+Finished building: UART_Rx.list
+ 
+11:59:01 **** Incremental Build of configuration Debug for project UART_Rx ****
+make -j28 all 
+arm-none-eabi-size  UART_Rx.elf 
+   text	   data	    bss	    dec	    hex	filename
+  17180	    132	   2100	  19412	   4bd4	UART_Rx.elf
+Finished building: default.size.stdout
+ 
+11:59:10 **** Incremental Build of configuration Debug for project UART_Rx ****
+make -j28 all 
+arm-none-eabi-size  UART_Rx.elf 
+   text	   data	    bss	    dec	    hex	filename
+  17180	    132	   2100	  19412	   4bd4	UART_Rx.elf
+Finished building: default.size.stdout
+ 
+12:11:18 **** Incremental Build of configuration Debug for project UART_Rx ****
+make -j28 all 
+arm-none-eabi-size  UART_Rx.elf 
+   text	   data	    bss	    dec	    hex	filename
+  17180	    132	   2100	  19412	   4bd4	UART_Rx.elf
+Finished building: default.size.stdout
+ 
+12:29:13 **** Incremental Build of configuration Debug for project UART_Rx ****
+make -j28 all 
+arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F401xE -c -I../Core/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc -I../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "Core/Src/main.o"
+../Core/Src/main.c: In function 'HAL_UART_RxCpltCallback':
+../Core/Src/main.c:74:23: warning: 'sprintf' writing a terminating nul past the end of the destination [-Wformat-overflow=]
+   74 |         sprintf(c, "%c", RxData[0]); //convert into a string
+      |                       ^
+../Core/Src/main.c:74:9: note: 'sprintf' output 2 bytes into a destination of size 1
+   74 |         sprintf(c, "%c", RxData[0]); //convert into a string
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~
+arm-none-eabi-gcc -o "UART_Rx.elf" @"objects.list"   -mcpu=cortex-m4 -T"C:\Users\marco\Desktop\git_sensor_local\Sensor-Systems-Labs\Lab_5\UART_Rx\UART_Rx\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="UART_Rx.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: UART_Rx.elf
+ 
+arm-none-eabi-size  UART_Rx.elf 
+arm-none-eabi-objdump -h -S UART_Rx.elf  > "UART_Rx.list"
+   text	   data	    bss	    dec	    hex	filename
+  17176	    132	   2100	  19408	   4bd0	UART_Rx.elf
+Finished building: default.size.stdout
+ 
+Finished building: UART_Rx.list
+ 
