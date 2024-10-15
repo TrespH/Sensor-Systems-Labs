@@ -74,8 +74,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
 	if (hadc == &hadc1) {
 		  if (HAL_ADC_PollForConversion(&hadc1, 10) == HAL_OK) {
 			  int reading = HAL_ADC_GetValue(&hadc1);
-			  voltage = reading*3.3/4096.0;
-			  int length = snprintf(buffer, sizeof(buffer), "%.3f\n", voltage);
+			  voltage = reading*3.3/4096.0;			  int length = snprintf(buffer, sizeof(buffer), "%.3f\n", voltage);
 			  HAL_UART_Transmit_DMA(&huart2, buffer, length);
 		  }
 	}
@@ -250,7 +249,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 8400-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 10000-1;
+  htim2.Init.Period = (TEMPO*10)-1;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
