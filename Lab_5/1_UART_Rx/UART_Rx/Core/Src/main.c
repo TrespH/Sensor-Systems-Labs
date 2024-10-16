@@ -69,13 +69,13 @@ char string[16] = "";	//string to be composed
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 
-	HAL_UART_Receive_DMA(&huart2, RxData, LENGTH);
-
 	sprintf(c, "%c", RxData[0]); //convert into a string
 	strcat(string, c);			 //concat the previous data with all the string
 
     lcd_clear();				 //clear LCD, ready to print the new word
     lcd_println(string, row);	 //print new string
+
+    HAL_UART_Receive_DMA(&huart2, RxData, LENGTH);
 
 }
 

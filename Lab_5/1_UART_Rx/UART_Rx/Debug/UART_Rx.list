@@ -37,15 +37,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  16 .debug_macro  00015bfe  00000000  00000000  000113d3  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   00009ab7  00000000  00000000  00026fd1  2**0
+ 17 .debug_line   00009ab5  00000000  00000000  00026fd1  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0008558c  00000000  00000000  00030a88  2**0
+ 18 .debug_str    00085587  00000000  00000000  00030a86  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000b6014  2**0
+ 19 .comment      00000043  00000000  00000000  000b600d  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000022e4  00000000  00000000  000b6058  2**2
+ 20 .debug_frame  000022e4  00000000  00000000  000b6050  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000080  00000000  00000000  000b833c  2**0
+ 21 .debug_line_str 0000007b  00000000  00000000  000b8334  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1080,32 +1080,33 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
  80009b4:	af00      	add	r7, sp, #0
  80009b6:	6078      	str	r0, [r7, #4]
 
-	HAL_UART_Receive_DMA(&huart2, RxData, LENGTH);
- 80009b8:	2201      	movs	r2, #1
- 80009ba:	490d      	ldr	r1, [pc, #52]	@ (80009f0 <HAL_UART_RxCpltCallback+0x40>)
- 80009bc:	480d      	ldr	r0, [pc, #52]	@ (80009f4 <HAL_UART_RxCpltCallback+0x44>)
- 80009be:	f001 ff03 	bl	80027c8 <HAL_UART_Receive_DMA>
 
 	sprintf(c, "%c", RxData[0]); //convert into a string
- 80009c2:	4b0b      	ldr	r3, [pc, #44]	@ (80009f0 <HAL_UART_RxCpltCallback+0x40>)
- 80009c4:	781b      	ldrb	r3, [r3, #0]
- 80009c6:	461a      	mov	r2, r3
- 80009c8:	490b      	ldr	r1, [pc, #44]	@ (80009f8 <HAL_UART_RxCpltCallback+0x48>)
- 80009ca:	480c      	ldr	r0, [pc, #48]	@ (80009fc <HAL_UART_RxCpltCallback+0x4c>)
- 80009cc:	f002 ffb0 	bl	8003930 <siprintf>
+ 80009b8:	4b0d      	ldr	r3, [pc, #52]	@ (80009f0 <HAL_UART_RxCpltCallback+0x40>)
+ 80009ba:	781b      	ldrb	r3, [r3, #0]
+ 80009bc:	461a      	mov	r2, r3
+ 80009be:	490d      	ldr	r1, [pc, #52]	@ (80009f4 <HAL_UART_RxCpltCallback+0x44>)
+ 80009c0:	480d      	ldr	r0, [pc, #52]	@ (80009f8 <HAL_UART_RxCpltCallback+0x48>)
+ 80009c2:	f002 ffb5 	bl	8003930 <siprintf>
 	strcat(string, c);			 //concat the previous data with all the string
- 80009d0:	490a      	ldr	r1, [pc, #40]	@ (80009fc <HAL_UART_RxCpltCallback+0x4c>)
- 80009d2:	480b      	ldr	r0, [pc, #44]	@ (8000a00 <HAL_UART_RxCpltCallback+0x50>)
- 80009d4:	f002 ffd4 	bl	8003980 <strcat>
+ 80009c6:	490c      	ldr	r1, [pc, #48]	@ (80009f8 <HAL_UART_RxCpltCallback+0x48>)
+ 80009c8:	480c      	ldr	r0, [pc, #48]	@ (80009fc <HAL_UART_RxCpltCallback+0x4c>)
+ 80009ca:	f002 ffd9 	bl	8003980 <strcat>
 
     lcd_clear();				 //clear LCD, ready to print the new word
- 80009d8:	f7ff fea4 	bl	8000724 <lcd_clear>
+ 80009ce:	f7ff fea9 	bl	8000724 <lcd_clear>
     lcd_println(string, row);	 //print new string
- 80009dc:	4b09      	ldr	r3, [pc, #36]	@ (8000a04 <HAL_UART_RxCpltCallback+0x54>)
- 80009de:	781b      	ldrb	r3, [r3, #0]
- 80009e0:	4619      	mov	r1, r3
- 80009e2:	4807      	ldr	r0, [pc, #28]	@ (8000a00 <HAL_UART_RxCpltCallback+0x50>)
- 80009e4:	f7ff fefe 	bl	80007e4 <lcd_println>
+ 80009d2:	4b0b      	ldr	r3, [pc, #44]	@ (8000a00 <HAL_UART_RxCpltCallback+0x50>)
+ 80009d4:	781b      	ldrb	r3, [r3, #0]
+ 80009d6:	4619      	mov	r1, r3
+ 80009d8:	4808      	ldr	r0, [pc, #32]	@ (80009fc <HAL_UART_RxCpltCallback+0x4c>)
+ 80009da:	f7ff ff03 	bl	80007e4 <lcd_println>
+
+    HAL_UART_Receive_DMA(&huart2, RxData, LENGTH);
+ 80009de:	2201      	movs	r2, #1
+ 80009e0:	4903      	ldr	r1, [pc, #12]	@ (80009f0 <HAL_UART_RxCpltCallback+0x40>)
+ 80009e2:	4808      	ldr	r0, [pc, #32]	@ (8000a04 <HAL_UART_RxCpltCallback+0x54>)
+ 80009e4:	f001 fef0 	bl	80027c8 <HAL_UART_Receive_DMA>
 
 }
  80009e8:	bf00      	nop
@@ -1113,11 +1114,11 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
  80009ec:	46bd      	mov	sp, r7
  80009ee:	bd80      	pop	{r7, pc}
  80009f0:	2000014c 	.word	0x2000014c
- 80009f4:	200000a4 	.word	0x200000a4
- 80009f8:	080042bc 	.word	0x080042bc
- 80009fc:	20000150 	.word	0x20000150
- 8000a00:	20000154 	.word	0x20000154
- 8000a04:	2000014d 	.word	0x2000014d
+ 80009f4:	080042bc 	.word	0x080042bc
+ 80009f8:	20000150 	.word	0x20000150
+ 80009fc:	20000154 	.word	0x20000154
+ 8000a00:	2000014d 	.word	0x2000014d
+ 8000a04:	200000a4 	.word	0x200000a4
 
 08000a08 <main>:
 /**
