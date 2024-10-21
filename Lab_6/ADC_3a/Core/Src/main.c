@@ -67,12 +67,11 @@ static void MX_TIM2_Init(void);
 /* USER CODE BEGIN 0 */
 char buffer[64]; // empty buffer with predefined maximum capacity
 float voltage;
-
+uint32_t pData;
 
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
 	if (hadc == &hadc1) {
-		int reading = HAL_ADC_GetValue(&hadc1);
-		voltage = reading*3.3/4096.0;
+		voltage = pData*3.3/4096.0;
 		int length = snprintf(buffer, sizeof(buffer), "%.3f\n", voltage);
 		HAL_UART_Transmit_DMA(&huart2, buffer, length);
 	}
@@ -112,10 +111,8 @@ int main(void)
   MX_USART2_UART_Init();
   MX_ADC1_Init();
   MX_TIM2_Init();
-  uint32_t pData, received;
   /* USER CODE BEGIN 2 */
   //HAL_TIM_Base_Start(&htim2);
-  //HAL_ADC_Start_DMA(&hadc1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -123,8 +120,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-	HAL_ADC_Start_DMA(&hadc1, &pData, 64);
-	received = HAL_ADC_GetValue(&hadc1);
+	HAL_ADC_Start_DMA(&hadc1, &pData, 1);
 	HAL_Delay(1000);
 	HAL_ADC_Stop_DMA(&hadc1);
     /* USER CODE BEGIN 3 */
