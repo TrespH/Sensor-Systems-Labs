@@ -65,7 +65,9 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#define TEMPO 1000
 #define CHANNEL_COUNT 3
+
 char buffer_uart[100]; // empty buffer with predefined maximum capacity
 uint16_t buffer_dma[CHANNEL_COUNT];
 
@@ -73,7 +75,11 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc) {
 	float vpot = buffer_dma[0]*3.3/4096.0;
 	float vtemp = (buffer_dma[1]*3.3/4096.0-0.76)/0.0025+25;
 	float vrefint = buffer_dma[2]*3.3/4096.0;
-	int length = snprintf(buffer_uart, sizeof(buffer_uart), "Potentiometer: %.3f V; Temperature: %.3f %cC; Vrefint: %.3f V\n", vpot, vtemp, 176, vrefint);
+	int length = snprintf(
+			buffer_uart,
+			sizeof(buffer_uart),
+			"Potentiometer: %.3f V; Temperature: %.3f %cC; Vrefint: %.3f V\n",
+			vpot, vtemp, 176, vrefint);
 	HAL_UART_Transmit_DMA(&huart2, buffer_uart, length);
 }
 /* USER CODE END 0 */
@@ -281,7 +287,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 8400-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 10000-1;
+  htim2.Init.Period = (TEMPO*10)-1;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
