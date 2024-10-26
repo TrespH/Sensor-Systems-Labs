@@ -57,7 +57,6 @@ DMA_HandleTypeDef hdma_usart2_tx;
 int FSR;					//full scale range
 int resolution_steps;		//resolution_step is 2^resolution_bits
 
-
 uint16_t in0_data[buffer_length];   //buffer that contains ADC sampled values
 float    sum = 0;					//it contains the sum of all the in0_data, it will be used to compute the average
 float    average;					//it contains the average of all the in0_data

@@ -60,8 +60,8 @@ all: main-build
 main-build: ADC_3b_LDR.elf secondary-outputs
 
 # Tool invocations
-ADC_3b_LDR.elf ADC_3b_LDR.map: $(OBJS) $(USER_OBJS) C:\Users\marco\Desktop\git_sensor_local\Sensor-Systems-Labs\LAB_06\ADC_3b_LDR\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "ADC_3b_LDR.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\marco\Desktop\git_sensor_local\Sensor-Systems-Labs\LAB_06\ADC_3b_LDR\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="ADC_3b_LDR.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+ADC_3b_LDR.elf ADC_3b_LDR.map: $(OBJS) $(USER_OBJS) C:\Users\marco\Desktop\git_sensor\Sensor-Systems-Labs\Lab_6\ADC_3b_LDR\ADC_3b_LDR\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "ADC_3b_LDR.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\marco\Desktop\git_sensor\Sensor-Systems-Labs\Lab_6\ADC_3b_LDR\ADC_3b_LDR\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="ADC_3b_LDR.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
