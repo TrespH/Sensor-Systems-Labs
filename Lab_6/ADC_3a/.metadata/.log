@@ -1,0 +1,19 @@
+!SESSION 2024-10-26 11:33:55.360 -----------------------------------------------
+eclipse.buildId=Version 1.16.1
+java.version=17.0.11
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_GB
+Framework arguments:  C:\Users\marco\Desktop\git_sensor\Sensor-Systems-Labs\Lab_6\ADC_3a\ADC_3a\.project
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 C:\Users\marco\Desktop\git_sensor\Sensor-Systems-Labs\Lab_6\ADC_3a\ADC_3a\.project
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2024-10-26 11:34:09.371
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2024-10-26 11:34:09.372
+!MESSAGE Log4j2 initialized with config file C:\Users\marco\Desktop\git_sensor\Sensor-Systems-Labs\Lab_6\ADC_3a\.metadata\.log4j2.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2024-10-26 11:34:11.415
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2024-10-26 11:34:15.635
+!MESSAGE Indexed 'ADC_3a' (25 sources, 122 headers) in 3.15 sec: 13,274 declarations; 64,740 references; 5 unresolved inclusions; 1,317 syntax errors; 1,598 unresolved names (2%)
