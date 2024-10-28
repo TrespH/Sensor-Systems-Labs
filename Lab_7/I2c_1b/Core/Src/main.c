@@ -62,7 +62,7 @@ static void MX_I2C1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 uint8_t LM75_REGISTER = 0x00;
-uint8_t temp_reading;
+uint8_t temp_reading[2];
 uint16_t LM75_ADDRESS = 0b1001000;
 char buffer_uart[100];
 
@@ -108,14 +108,18 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	int length;
-	if (HAL_I2C_Master_Receive(&hi2c1, (LM75_ADDRESS << 1), &temp_reading, 1, 100) == HAL_OK) {
-		length = snprintf(buffer_uart, sizeof(buffer_uart),	"Temperature: %d %cC;\n", temp_reading, 176);
+	HAL_I2C_Master_Receive(&hi2c1, (LM75_ADDRESS << 1), temp_reading, 2, 100);
+	//temp_reading[0] = 0b11100101; Test for negative temperature of -27 degrees
+	int16_t tx_temp = temp_reading[0];
+	tx_temp = (tx_temp << 3) + (temp_reading[1] >> 5); // building final 11bit temperature from the two bytes
+	if ((temp_reading[0] & 10000000) == 128) { // checking if MSBit of MSByte is 1 (negative temperature)
+		tx_temp += 0b1111100000000000; // extending the 1 of the MSBit of the MSByte to the left (16-11=5 bits)
+		tx_temp = -((~tx_temp)+1); // 2's complement
 	}
-	else {
-		length = snprintf(buffer_uart, sizeof(buffer_uart),	"Error in reading!\n");
-	}
+
+	int length = snprintf(buffer_uart, sizeof(buffer_uart),	"Temperature: %0.3f %cC;\n", tx_temp*0.125, 176);
 	HAL_UART_Transmit_DMA(&huart2, buffer_uart, length);
+
 	HAL_Delay(1000);
     /* USER CODE END WHILE */
 
