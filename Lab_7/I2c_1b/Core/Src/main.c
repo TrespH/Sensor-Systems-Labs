@@ -42,6 +42,8 @@
 /* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c1;
 
+TIM_HandleTypeDef htim2;
+
 UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_tx;
 
@@ -55,17 +57,33 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#define TEMPO 700
 uint8_t LM75_REGISTER = 0x00;
 uint8_t temp_reading[2];
-uint16_t LM75_ADDRESS = 0b1001000;
+uint16_t LM75_TX_ADDRESS = (0b1001000 << 1);
+uint16_t LM75_RX_ADDRESS = (0b1001000 << 1) + 1;
 char buffer_uart[100];
 
+void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
+	HAL_I2C_Master_Receive(&hi2c1, LM75_RX_ADDRESS, temp_reading, 2, 100);
+	//temp_reading[0] = 0b11100101; Test for negative temperature of -27 degrees
+	int16_t tx_temp = temp_reading[0];
+	tx_temp = (tx_temp << 3) + (temp_reading[1] >> 5); // building final 11bit temperature from the two bytes
+	if ((temp_reading[0] & 0b10000000) == 128) { // checking if MSBit of MSByte is 1 (negative temperature)
+		tx_temp += 0b1111100000000000; // extending the 1 of the MSBit of the MSByte to the left (16-11=5 bits)
+		tx_temp = -((~tx_temp)+1); // 2's complement
+	}
+
+	int length = snprintf(buffer_uart, sizeof(buffer_uart),	"Temperature: %0.3f %cC;\n", tx_temp*0.125, 176);
+	HAL_UART_Transmit_DMA(&huart2, buffer_uart, length);
+}
 /* USER CODE END 0 */
 
 /**
@@ -100,27 +118,16 @@ int main(void)
   MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_I2C1_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-  HAL_I2C_Master_Transmit(&hi2c1, (LM75_ADDRESS << 0), &LM75_REGISTER, 1, 100);
+  HAL_TIM_Base_Start_IT(&htim2);
+  HAL_I2C_Master_Transmit(&hi2c1, LM75_TX_ADDRESS, &LM75_REGISTER, 1, 100);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	HAL_I2C_Master_Receive(&hi2c1, (LM75_ADDRESS << 1), temp_reading, 2, 100);
-	//temp_reading[0] = 0b11100101; Test for negative temperature of -27 degrees
-	int16_t tx_temp = temp_reading[0];
-	tx_temp = (tx_temp << 3) + (temp_reading[1] >> 5); // building final 11bit temperature from the two bytes
-	if ((temp_reading[0] & 10000000) == 128) { // checking if MSBit of MSByte is 1 (negative temperature)
-		tx_temp += 0b1111100000000000; // extending the 1 of the MSBit of the MSByte to the left (16-11=5 bits)
-		tx_temp = -((~tx_temp)+1); // 2's complement
-	}
-
-	int length = snprintf(buffer_uart, sizeof(buffer_uart),	"Temperature: %0.3f %cC;\n", tx_temp*0.125, 176);
-	HAL_UART_Transmit_DMA(&huart2, buffer_uart, length);
-
-	HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -205,6 +212,51 @@ static void MX_I2C1_Init(void)
   /* USER CODE BEGIN I2C1_Init 2 */
 
   /* USER CODE END I2C1_Init 2 */
+
+}
+
+/**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 8400-1;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = (TEMPO*10)-1;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
 
 }
 
