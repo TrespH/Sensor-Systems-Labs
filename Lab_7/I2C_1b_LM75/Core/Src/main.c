@@ -86,21 +86,20 @@ static void MX_TIM2_Init(void);
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
 
-	if(HAL_I2C_Master_Receive(&hi2c1, LM75_RD_ADDRESS, data, size + 1, timeout) == HAL_OK) //Receive data from I2C, 2 data stream has been selected to deal with decimal number
+	if (HAL_I2C_Master_Receive(&hi2c1, LM75_RD_ADDRESS, data, size + 1, timeout) == HAL_OK) //Receive data from I2C, 2 data stream has been selected to deal with decimal number
 	{
+		data_old = data[1]; // Comment this if you're using a LM75B-family chip!
 
-		concat_data = ((data[0] << 3) | (data_old >> 5)) & 0x7FF; // Arranging a new 11 bit word, and masking to erase 16-11=5 MSB bits (0x7ff = 0b011111111111)
+		concat_data = ((data[0] << 3) | (data_old >> 5)); // Arranging a new 11 bit word
 
 		if (data[0] & 0x80) // Check if the sign bit in the first byte is 1 (1 = negative numbers), if so we are dealing with negative numbers
 		{
-			concat_data = concat_data | 0b1111100000000000;   	 // Masking a negative number
+			concat_data = concat_data | 0b1111100000000000;   	 // Forcing a negative number to also have 1's on the first 16-11=5 bits
 			temperature = -((~(concat_data) + 1) * 0.125);		 // Computing the 2's complement
 
 		}
 		else                // Positive value
-		{
 			temperature = (concat_data * 0.125); 				 // Just multiply by 0.125 for positive values
-		}
 
 		string_length = snprintf(string, sizeof(string), "Temperature: %.3f %cC \n", temperature, 176);
 
@@ -110,51 +109,12 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 		string_length = snprintf(string, sizeof(string), "Error reading from LM75! \n");
 	}
 
-	concat_data = 0;		//Once used, erase the 11 bit word
-	data_old    = data[1];  //Save the decimal part in a auxiliary variable, it will be used in the next iteration in the 11 bits word arrangement
+	concat_data = 0; 	 //Once used, erase the 11 bit word
+	data_old = data[1];  //Save the decimal part in a auxiliary variable, it will be used in the next iteration in the 11 bits word arrangement
 
 	HAL_UART_Transmit_DMA(&huart2, string, string_length);
 
 }
-
-// ------------------------------------------------------------------ //
-// ------ Uncomment this section if you are working with LM75A ------ //
-// ------------------------------------------------------------------ //
-
-/*
-void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
-{
-
-	if(HAL_I2C_Master_Receive(&hi2c1, LM75_RD_ADDRESS, data, size + 1, timeout) == HAL_OK) //Receive data from I2C, 2 data stream has been selected to deal with decimal number
-	{
-
-		concat_data = ((data[0] << 3) | (data[1] >> 5)) & 0x7FF; // Arranging a new 11 bit word, and masking to erase 16-11=5 MSB bits (0x7ff = 0b011111111111)
-
-		if (data[0] & 0x80) // Check if the sign bit in the first byte is 1 (1 = negative numbers), if so we are dealing with negative numbers
-		{
-			concat_data = concat_data | 0b1111100000000000;   	 // Masking a negative number
-			temperature = -((~(concat_data) + 1) * 0.125);		 // Computing the 2's complement
-
-		}
-		else                // Positive value
-		{
-			temperature = (concat_data * 0.125); 				 // Just multiply by 0.125 for positive values
-		}
-
-		string_length = snprintf(string, sizeof(string), "Temperature: %.3f %cC \n", temperature, 176);
-
-	}
-	else //if communication didn't work correctly
-	{
-		string_length = snprintf(string, sizeof(string), "Error reading from LM75! \n");
-	}
-
-	concat_data = 0;		//Once used, erase the 11 bit word
-
-	HAL_UART_Transmit_DMA(&huart2, string, string_length);
-
-}
-*/
 
 /* USER CODE END 0 */
 
