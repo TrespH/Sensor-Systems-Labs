@@ -79,16 +79,18 @@ static void MX_TIM2_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-// ------------------------------------------------------------------ //
-// ------ Uncomment this section if you are working with LM75B ------ //
-// ------------------------------------------------------------------ //
-
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 {
 
-	if (HAL_I2C_Master_Receive(&hi2c1, LM75_RD_ADDRESS, data, size + 1, timeout) == HAL_OK) //Receive data from I2C, 2 data stream has been selected to deal with decimal number
-	{
-		data_old = data[1]; // Comment this if you're using a LM75B-family chip!
+	if (HAL_I2C_Master_Receive(&hi2c1, LM75_RD_ADDRESS, data, size + 1, timeout) == HAL_OK) //Receive data from I2C, 2 data stream has been
+	{																					    //selected to deal with decimal number
+
+		// ------------------------------------------------------------------ //
+		// -------- Comment this line if you are working with LM75B -------- //
+
+		//data_old = data[1];
+
+		// ------------------------------------------------------------------ //
 
 		concat_data = ((data[0] << 3) | (data_old >> 5)); // Arranging a new 11 bit word
 
