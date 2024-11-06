@@ -51,8 +51,8 @@ DMA_HandleTypeDef hdma_usart2_tx;
 uint16_t MEMS_WR_ADDRESS = 0b01010000;
 uint16_t MEMS_RD_ADDRESS = 0b01010001;
 
-uint16_t LIS2_WR_ADDRESS = 0b00110000;
-uint16_t LIS2_RD_ADDRESS = 0b00110001; //0b01010001;
+uint16_t MEMS12_WR_ADDRESS = 0b00110000;
+uint16_t MEMS12_RD_ADDRESS = 0b00110001; //0b01010001;
 
 uint8_t CTRL_REG1[] = {0x20, 0b00010111}; //reg address, 1Hz + normal mode + XYZ enabled
 uint8_t CTRL_REG2[] = {0x21, 0b00000000}; //reg address, no HPF (default value at startup)
@@ -153,23 +153,20 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim2);
 
   if(HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, CTRL_REG1, sizeof(CTRL_REG1), timeout) == HAL_OK)
-   {
-       string_length = snprintf(string, sizeof(string), "LIS2DE found!");
-   }
-   else
-   {
-       MEMS_WR_ADDRESS = LIS2_WR_ADDRESS;
-
-       if(HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, CTRL_REG1, sizeof(CTRL_REG1), timeout) == HAL_OK)
+  {
+	  string_length = snprintf(string, sizeof(string), "LIS2DE found!");
+  }
+  else
+  {
+       if(HAL_I2C_Master_Transmit(&hi2c1, MEMS12_WR_ADDRESS, CTRL_REG1, sizeof(CTRL_REG1), timeout) == HAL_OK)
        {
-
-           string_length = snprintf(string, sizeof(string), "LIS2DE12 found!");
+    	   string_length = snprintf(string, sizeof(string), "LIS2DE12 found!");
        }
        else
        {
            string_length = snprintf(string, sizeof(string), "Error!");
        }
-   }
+  }
 
    HAL_UART_Transmit_DMA(&huart2, string, string_length);
 
