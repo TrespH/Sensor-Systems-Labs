@@ -31,7 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define TEMPO 1000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -50,8 +50,6 @@ UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
-#define TEMPO 1000
-
 uint16_t MEMS_WR_ADDRESS = 0b01010000;
 uint16_t MEMS_RD_ADDRESS = 0b01010001;
 
@@ -62,21 +60,19 @@ uint8_t CTRL_REG1[] = {0x20, 0b00010111}; //reg address, 1Hz + normal mode + XYZ
 uint8_t CTRL_REG2[] = {0x21, 0b00000000}; //reg address, no HPF (default value at startup)
 uint8_t CTRL_REG4[] = {0x23, 0b00000000}; //reg address, continuos update + 2g FSR + self test disabled (default value at st)
 
-uint16_t MEMS_REGISTER_X   = 0x29;
-uint16_t MEMS_REGISTER_Y   = 0x2B;
-uint16_t MEMS_REGISTER_Z   = 0x2D;
-
+uint16_t MEMS_REGISTER_X_AUTO_INCREMENT = 0x29 | 0x80; // Setting MSB to 1 to enable auto-increment
 //uint8_t data[3] = {0};
 
 uint8_t data = 0;
 
-uint16_t size = 1;
-uint32_t timeout = 10;
+uint16_t size = 1; // #Bytes of initial I2C transmissions
+uint16_t multiple_size = 3; // #Bytes to read (X, Y, Z)
+uint32_t timeout = 10; // Timeout for initial I2C transmissions
 
 char string[32];
 int string_length = 0;
 
-int8_t x, y, z = 0;
+int8_t xyz_data[3]; // Array to hold X, Y, Z data
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -92,44 +88,25 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-/*
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
-	 x = 0;
-	 HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_X, size, timeout);
-	 HAL_I2C_Mem_Read_DMA(&hi2c1, MEMS_WR_ADDRESS+1, &MEMS_REGISTER_X, I2C_MEMADD_SIZE_8BIT, &x, size);
-
-	 y = 0;
-	 HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_Y, size, timeout);
-	 HAL_I2C_Master_Receive(&hi2c1, MEMS_WR_ADDRESS+1, &y, size, timeout);
-
-	 z = 0;
-	 HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_Z, size, timeout);
-	 HAL_I2C_Master_Receive(&hi2c1, MEMS_WR_ADDRESS+1, &z, size, timeout);
-
-	 float acc_g_x = x / 64.0;
-	 float acc_g_y = y / 64.0;
-	 float acc_g_z = z / 64.0;
-
-	 string_length = snprintf(string, sizeof(string), "X: %.2f, Y: %.2f, Z: %.2f\n", acc_g_x, acc_g_y, acc_g_z);
-
-	 HAL_UART_Transmit_DMA(&huart2, string, string_length);
-}
-*/
-void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
-	x = 0;
-	HAL_I2C_Master_Transmit_DMA(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_X, size);
+	xyz_data[0] = 0;
+	xyz_data[1] = 0;
+	xyz_data[2] = 0;
+    // Transmit the X register address with auto-increment enabled
+	HAL_I2C_Master_Transmit_DMA(&hi2c1, MEMS_WR_ADDRESS, (uint8_t*)&MEMS_REGISTER_X_AUTO_INCREMENT, multiple_size);
 }
 
 void HAL_I2C_MasterTxCpltCallback (I2C_HandleTypeDef *hi2c){
-	int8_t y = x;
-	HAL_I2C_Master_Receive_DMA(&hi2c1, MEMS_WR_ADDRESS+1, &x, size);
-
+    // Transmit complete, now initiate a receive to read X, Y, Z
+	HAL_I2C_Master_Receive_DMA(&hi2c1, (MEMS_WR_ADDRESS + 1), (uint8_t*)xyz_data, multiple_size);
 }
 
 void HAL_I2C_MasterRxCpltCallback (I2C_HandleTypeDef *hi2c){
-	float acc_g_x = x / 64.0;
-	string_length = snprintf(string, sizeof(string), "X: %.2f, Y: %.2f, Z: %.2f\n", acc_g_x, 0.2, 5.7);
-	HAL_UART_Transmit_DMA(&huart2, string, string_length);
+	float acc_g_x = xyz_data[0] / 64.0;
+	float acc_g_y = xyz_data[1] / 64.0;
+	float acc_g_z = xyz_data[2] / 64.0;
+	string_length = snprintf(string, sizeof(string), "X: %.2f, Y: %.2f, Z: %.2f\n", acc_g_x, acc_g_y, acc_g_z);
+	HAL_UART_Transmit_DMA(&huart2, (uint8_t*)string, string_length);
 }
 /* USER CODE END 0 */
 
@@ -182,7 +159,7 @@ int main(void)
       }
   }
 
-  HAL_UART_Transmit_DMA(&huart2, string, string_length);
+  HAL_UART_Transmit_DMA(&huart2, (uint8_t*)string, string_length);
 
   HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, CTRL_REG2, sizeof(CTRL_REG2), timeout);
   HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, CTRL_REG4, sizeof(CTRL_REG4), timeout);
