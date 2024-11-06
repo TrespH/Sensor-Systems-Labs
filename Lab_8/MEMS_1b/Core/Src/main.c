@@ -31,7 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define TEMPO 100
+#define TEMPO 1000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -52,7 +52,7 @@ uint16_t MEMS_WR_ADDRESS = 0b01010000;
 uint16_t MEMS_RD_ADDRESS = 0b01010001;
 
 uint16_t MEMS12_WR_ADDRESS = 0b00110000;
-uint16_t MEMS12_RD_ADDRESS = 0b00110001; //0b01010001;
+uint16_t MEMS12_RD_ADDRESS = 0b00110001;
 
 uint8_t CTRL_REG1[] = {0x20, 0b00010111}; //reg address, 1Hz + normal mode + XYZ enabled
 uint8_t CTRL_REG2[] = {0x21, 0b00000000}; //reg address, no HPF (default value at startup)
@@ -89,29 +89,27 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
-		{
+void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
+	 x = 0;
+	 HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_X, size, timeout);
+	 HAL_I2C_Master_Receive(&hi2c1, MEMS_WR_ADDRESS+1, &x, size, timeout);
 
-	 	 x = 0;
-	   	 HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_X, size, timeout);
-	  	 HAL_I2C_Master_Receive(&hi2c1, MEMS_WR_ADDRESS+1, &x, size, timeout);
+	 y = 0;
+	 HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_Y, size, timeout);
+	 HAL_I2C_Master_Receive(&hi2c1, MEMS_WR_ADDRESS+1, &y, size, timeout);
 
-	  	 y = 0;
-	  	 HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_Y, size, timeout);
-	  	 HAL_I2C_Master_Receive(&hi2c1, MEMS_WR_ADDRESS+1, &y, size, timeout);
+	 z = 0;
+	 HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_Z, size, timeout);
+	 HAL_I2C_Master_Receive(&hi2c1, MEMS_WR_ADDRESS+1, &z, size, timeout);
 
-	  	 z = 0;
-	  	 HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_Z, size, timeout);
-	  	 HAL_I2C_Master_Receive(&hi2c1, MEMS_WR_ADDRESS+1, &z, size, timeout);
+	 float acc_g_x = x / 64.0; // Divide so to let the value range in +/-2
+	 float acc_g_y = y / 64.0;
+	 float acc_g_z = z / 64.0;
 
-	  	 float acc_g_x = x / 64.0;
-	     float acc_g_y = y / 64.0;
-	     float acc_g_z = z / 64.0;
+	 string_length = snprintf(string, sizeof(string), "X: %.2f, Y: %.2f, Z: %.2f\n", acc_g_x, acc_g_y, acc_g_z);
 
-	     string_length = snprintf(string, sizeof(string), "X: %.2f, Y: %.2f, Z: %.2f\n", acc_g_x, acc_g_y, acc_g_z);
-
-	     HAL_UART_Transmit_DMA(&huart2, string, string_length);
-   }
+	 HAL_UART_Transmit_DMA(&huart2, string, string_length);
+}
 
 /* USER CODE END 0 */
 
@@ -150,30 +148,28 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
+  //HAL_TIM_Base_Start_IT(&htim2);
+
+  if (HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, CTRL_REG1, sizeof(CTRL_REG1), timeout) == HAL_OK) {
+	  string_length = snprintf(string, sizeof(string), "LIS2DE found!\n");
+  }
+  else {
+      if (HAL_I2C_Master_Transmit(&hi2c1, MEMS12_WR_ADDRESS, CTRL_REG1, sizeof(CTRL_REG1), timeout) == HAL_OK) {
+    	  string_length = snprintf(string, sizeof(string), "LIS2DE12 found!\n");
+      }
+      else {
+          string_length = snprintf(string, sizeof(string), "Error! No device found!\n");
+      }
+  }
+
+  HAL_UART_Transmit_DMA(&huart2, string, string_length);
+
+  HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, CTRL_REG2, sizeof(CTRL_REG2), timeout);
+  HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, CTRL_REG4, sizeof(CTRL_REG4), timeout);
+
   HAL_TIM_Base_Start_IT(&htim2);
 
-  if(HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, CTRL_REG1, sizeof(CTRL_REG1), timeout) == HAL_OK)
-  {
-	  string_length = snprintf(string, sizeof(string), "LIS2DE found!");
-  }
-  else
-  {
-       if(HAL_I2C_Master_Transmit(&hi2c1, MEMS12_WR_ADDRESS, CTRL_REG1, sizeof(CTRL_REG1), timeout) == HAL_OK)
-       {
-    	   string_length = snprintf(string, sizeof(string), "LIS2DE12 found!");
-       }
-       else
-       {
-           string_length = snprintf(string, sizeof(string), "Error!");
-       }
-  }
-
-   HAL_UART_Transmit_DMA(&huart2, string, string_length);
-
-   HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, CTRL_REG2, sizeof(CTRL_REG2), timeout);
-   HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, CTRL_REG4, sizeof(CTRL_REG4), timeout);
-
-     /* USER CODE END 2 */
+  /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
