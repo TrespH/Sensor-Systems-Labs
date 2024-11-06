@@ -54,16 +54,13 @@ uint16_t MEMS_WR_ADDRESS = 0b01010000;
 uint16_t MEMS_RD_ADDRESS = 0b01010001;
 
 uint16_t MEMS12_WR_ADDRESS = 0b00110000;
-uint16_t MEMS12_RD_ADDRESS = 0b00110001; //0b01010001;
+uint16_t MEMS12_RD_ADDRESS = 0b00110001;
 
 uint8_t CTRL_REG1[] = {0x20, 0b00010111}; //reg address, 1Hz + normal mode + XYZ enabled
 uint8_t CTRL_REG2[] = {0x21, 0b00000000}; //reg address, no HPF (default value at startup)
 uint8_t CTRL_REG4[] = {0x23, 0b00000000}; //reg address, continuos update + 2g FSR + self test disabled (default value at st)
 
 uint16_t MEMS_REGISTER_X_AUTO_INCREMENT = 0x29 | 0x80; // Setting MSB to 1 to enable auto-increment
-//uint8_t data[3] = {0};
-
-uint8_t data = 0;
 
 uint16_t size = 1; // #Bytes of initial I2C transmissions
 uint16_t multiple_size = 3; // #Bytes to read (X, Y, Z)

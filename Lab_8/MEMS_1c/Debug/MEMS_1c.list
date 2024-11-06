@@ -27,25 +27,25 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  0000e1ec  2**0
                   CONTENTS, READONLY
- 12 .debug_info   000105c5  00000000  00000000  0000e21c  2**0
+ 12 .debug_info   000105b4  00000000  00000000  0000e21c  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 13 .debug_abbrev 000021b7  00000000  00000000  0001e7e1  2**0
+ 13 .debug_abbrev 000021b7  00000000  00000000  0001e7d0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 14 .debug_aranges 00000fe8  00000000  00000000  00020998  2**3
+ 14 .debug_aranges 00000fe8  00000000  00000000  00020988  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 15 .debug_rnglists 00000c94  00000000  00000000  00021980  2**0
+ 15 .debug_rnglists 00000c94  00000000  00000000  00021970  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 16 .debug_macro  00017571  00000000  00000000  00022614  2**0
+ 16 .debug_macro  00017571  00000000  00000000  00022604  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0001285b  00000000  00000000  00039b85  2**0
+ 17 .debug_line   0001285b  00000000  00000000  00039b75  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    00091da1  00000000  00000000  0004c3e0  2**0
+ 18 .debug_str    00091da0  00000000  00000000  0004c3d0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000de181  2**0
+ 19 .comment      00000043  00000000  00000000  000de170  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  000059b4  00000000  00000000  000de1c4  2**2
+ 20 .debug_frame  000059b4  00000000  00000000  000de1b4  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_line_str 00000071  00000000  00000000  000e3b78  2**0
+ 21 .debug_line_str 00000071  00000000  00000000  000e3b68  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -1893,7 +1893,7 @@ static void MX_TIM2_Init(void)
  80013c0:	609a      	str	r2, [r3, #8]
   htim2.Init.Period = (TEMPO*10)-1;
  80013c2:	4b19      	ldr	r3, [pc, #100]	@ (8001428 <MX_TIM2_Init+0x98>)
- 80013c4:	f242 720f 	movw	r2, #9999	@ 0x270f
+ 80013c4:	f241 3287 	movw	r2, #4999	@ 0x1387
  80013c8:	60da      	str	r2, [r3, #12]
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
  80013ca:	4b17      	ldr	r3, [pc, #92]	@ (8001428 <MX_TIM2_Init+0x98>)
