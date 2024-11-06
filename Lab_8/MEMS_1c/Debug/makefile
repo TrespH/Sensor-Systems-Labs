@@ -60,8 +60,8 @@ all: main-build
 main-build: MEMS_1c.elf secondary-outputs
 
 # Tool invocations
-MEMS_1c.elf MEMS_1c.map: $(OBJS) $(USER_OBJS) C:\Users\teopo\Documents\GitHub\Sensor-Systems-Labs\Lab_8\MEMS_1c\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "MEMS_1c.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\teopo\Documents\GitHub\Sensor-Systems-Labs\Lab_8\MEMS_1c\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MEMS_1c.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+MEMS_1c.elf MEMS_1c.map: $(OBJS) $(USER_OBJS) C:\Users\Andrea\Documents\GitHub\Sensor-Systems-Labs\Lab_8\MEMS_1c\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "MEMS_1c.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Andrea\Documents\GitHub\Sensor-Systems-Labs\Lab_8\MEMS_1c\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MEMS_1c.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
