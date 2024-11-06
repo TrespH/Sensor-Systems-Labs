@@ -50,6 +50,8 @@ UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
+#define TEMPO 1000
+
 uint16_t MEMS_WR_ADDRESS = 0b01010000;
 uint16_t MEMS_RD_ADDRESS = 0b01010001;
 
@@ -90,10 +92,11 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+/*
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
 	 x = 0;
 	 HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_X, size, timeout);
-	 HAL_I2C_Master_Receive(&hi2c1, MEMS_WR_ADDRESS+1, &x, size, timeout);
+	 HAL_I2C_Mem_Read_DMA(&hi2c1, MEMS_WR_ADDRESS+1, &MEMS_REGISTER_X, I2C_MEMADD_SIZE_8BIT, &x, size);
 
 	 y = 0;
 	 HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_Y, size, timeout);
@@ -110,6 +113,16 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
 	 string_length = snprintf(string, sizeof(string), "X: %.2f, Y: %.2f, Z: %.2f\n", acc_g_x, acc_g_y, acc_g_z);
 
 	 HAL_UART_Transmit_DMA(&huart2, string, string_length);
+}
+*/
+void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
+	 x = 0;
+	 HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_X, size, timeout);
+	 HAL_I2C_Mem_Read_DMA(&hi2c1, MEMS_WR_ADDRESS+1, &MEMS_REGISTER_X, I2C_MEMADD_SIZE_8BIT, &x, size);
+}
+
+void HAL_I2C_MasterRxCpltCallback (I2C_HandleTypeDef *hi2c){
+	int8_t y = x;
 }
 /* USER CODE END 0 */
 
