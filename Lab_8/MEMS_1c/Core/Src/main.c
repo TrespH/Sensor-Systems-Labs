@@ -116,13 +116,20 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
 }
 */
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
-	 x = 0;
-	 HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_X, size, timeout);
-	 HAL_I2C_Mem_Read_DMA(&hi2c1, MEMS_WR_ADDRESS+1, &MEMS_REGISTER_X, I2C_MEMADD_SIZE_8BIT, &x, size);
+	x = 0;
+	HAL_I2C_Master_Transmit_DMA(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_X, size);
+}
+
+void HAL_I2C_MasterTxCpltCallback (I2C_HandleTypeDef *hi2c){
+	int8_t y = x;
+	HAL_I2C_Master_Receive_DMA(&hi2c1, MEMS_WR_ADDRESS+1, &x, size);
+
 }
 
 void HAL_I2C_MasterRxCpltCallback (I2C_HandleTypeDef *hi2c){
-	int8_t y = x;
+	float acc_g_x = x / 64.0;
+	string_length = snprintf(string, sizeof(string), "X: %.2f, Y: %.2f, Z: %.2f\n", acc_g_x, 0.2, 5.7);
+	HAL_UART_Transmit_DMA(&huart2, string, string_length);
 }
 /* USER CODE END 0 */
 
