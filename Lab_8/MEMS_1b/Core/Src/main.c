@@ -101,7 +101,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
 	 float acc_g_y = y / 64.0;
 	 float acc_g_z = z / 64.0;
 
-	 string_length = snprintf(string, sizeof(string), "X: %.2f g, Y: %.2f g, Z: %.2f g\n", acc_g_x, acc_g_y, acc_g_z);
+	 string_length = snprintf(string, sizeof(string), "X:%.2fg, Y:%.2fg, Z:%.2fg\n", acc_g_x, acc_g_y, acc_g_z);
 	 HAL_UART_Transmit_DMA(&huart2, (uint8_t*)string, string_length);
 }
 

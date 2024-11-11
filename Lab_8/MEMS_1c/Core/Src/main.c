@@ -103,7 +103,7 @@ void HAL_I2C_MasterRxCpltCallback (I2C_HandleTypeDef *hi2c){
 	float acc_g_x = xyz_data[0] / 64.0;
 	float acc_g_y = xyz_data[2] / 64.0;
 	float acc_g_z = xyz_data[4] / 64.0;
-	string_length = snprintf(string, sizeof(string), "X: %.2f g, Y: %.2f g, Z: %.2f g\n", acc_g_x, acc_g_y, acc_g_z);
+	string_length = snprintf(string, sizeof(string), "X:%.2fg, Y:%.2fg, Z:%.2fg\n", acc_g_x, acc_g_y, acc_g_z);
 	HAL_UART_Transmit_DMA(&huart2, (uint8_t*)string, string_length);
 }
 /* USER CODE END 0 */
