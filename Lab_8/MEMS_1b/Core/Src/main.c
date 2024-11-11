@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "stdio.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -48,23 +48,19 @@ UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
-uint16_t MEMS_WR_ADDRESS = 0b01010000;
-uint16_t MEMS_RD_ADDRESS = 0b01010001;
+uint16_t MEMS_WR_ADDRESS = 0b01010000; //LISDE write address
+//uint16_t MEMS_RD_ADDRESS = 0b01010001; LISDE read address == MEMS_WR_ADDRESS+1
 
-uint16_t MEMS12_WR_ADDRESS = 0b00110000;
-uint16_t MEMS12_RD_ADDRESS = 0b00110001;
+uint16_t MEMS12_WR_ADDRESS = 0b00110000; //LISDE12 write address
+//uint16_t MEMS12_RD_ADDRESS = 0b00110001; LISDE read address == MEMS12_WR_ADDRESS+1
 
 uint8_t CTRL_REG1[] = {0x20, 0b00010111}; //reg address, 1Hz + normal mode + XYZ enabled
 uint8_t CTRL_REG2[] = {0x21, 0b00000000}; //reg address, no HPF (default value at startup)
 uint8_t CTRL_REG4[] = {0x23, 0b00000000}; //reg address, continuos update + 2g FSR + self test disabled (default value at st)
 
-uint16_t MEMS_REGISTER_X   = 0x29;
-uint16_t MEMS_REGISTER_Y   = 0x2B;
-uint16_t MEMS_REGISTER_Z   = 0x2D;
-
-//uint8_t data[3] = {0};
-
-uint8_t data = 0;
+uint8_t MEMS_REGISTER_X = 0x29;
+uint8_t MEMS_REGISTER_Y = 0x2B;
+uint8_t MEMS_REGISTER_Z = 0x2D;
 
 uint16_t size = 1;
 uint32_t timeout = 10;
@@ -73,7 +69,6 @@ char string[32];
 int string_length = 0;
 
 int8_t x, y, z = 0;
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -102,13 +97,12 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
 	 HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, &MEMS_REGISTER_Z, size, timeout);
 	 HAL_I2C_Master_Receive(&hi2c1, MEMS_WR_ADDRESS+1, &z, size, timeout);
 
-	 float acc_g_x = x / 64.0; // Divide so to let the value range in +/-2
+	 float acc_g_x = x / 64.0; // Divide so to let the value range in +/-2 g
 	 float acc_g_y = y / 64.0;
 	 float acc_g_z = z / 64.0;
 
-	 string_length = snprintf(string, sizeof(string), "X: %.2f, Y: %.2f, Z: %.2f\n", acc_g_x, acc_g_y, acc_g_z);
-
-	 HAL_UART_Transmit_DMA(&huart2, string, string_length);
+	 string_length = snprintf(string, sizeof(string), "X: %.2f g, Y: %.2f g, Z: %.2f g\n", acc_g_x, acc_g_y, acc_g_z);
+	 HAL_UART_Transmit_DMA(&huart2, (uint8_t*)string, string_length);
 }
 
 /* USER CODE END 0 */
@@ -148,8 +142,6 @@ int main(void)
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
-  //HAL_TIM_Base_Start_IT(&htim2);
-
   if (HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, CTRL_REG1, sizeof(CTRL_REG1), timeout) == HAL_OK) {
 	  string_length = snprintf(string, sizeof(string), "LIS2DE found!\n");
   }
@@ -162,7 +154,7 @@ int main(void)
       }
   }
 
-  HAL_UART_Transmit_DMA(&huart2, string, string_length);
+  HAL_UART_Transmit_DMA(&huart2, (uint8_t*)string, string_length);
 
   HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, CTRL_REG2, sizeof(CTRL_REG2), timeout);
   HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, CTRL_REG4, sizeof(CTRL_REG4), timeout);

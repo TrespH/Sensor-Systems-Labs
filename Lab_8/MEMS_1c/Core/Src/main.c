@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "stdio.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -50,11 +50,12 @@ UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
+//LISDE write and read addresses
 uint16_t MEMS_WR_ADDRESS = 0b01010000;
-uint16_t MEMS_RD_ADDRESS = 0b01010001;
-
+//uint16_t MEMS_RD_ADDRESS = 0b01010001;
+//LISDE12 write and read addresses
 uint16_t MEMS12_WR_ADDRESS = 0b00110000;
-uint16_t MEMS12_RD_ADDRESS = 0b00110001;
+//uint16_t MEMS12_RD_ADDRESS = 0b00110001;
 
 uint8_t CTRL_REG1[] = {0x20, 0b00010111}; //reg address, 1Hz + normal mode + XYZ enabled
 uint8_t CTRL_REG2[] = {0x21, 0b00000000}; //reg address, no HPF (default value at startup)
@@ -90,7 +91,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
 	xyz_data[2] = 0;
 	xyz_data[4] = 0;
     // Transmit the X register address with auto-increment enabled
-	HAL_I2C_Master_Transmit_DMA(&hi2c1, MEMS_WR_ADDRESS, (uint8_t*)&MEMS_REGISTER_X_AUTO_INCREMENT, 1);
+	HAL_I2C_Master_Transmit_DMA(&hi2c1, MEMS_WR_ADDRESS, (uint8_t*)&MEMS_REGISTER_X_AUTO_INCREMENT, size);
 }
 
 void HAL_I2C_MasterTxCpltCallback (I2C_HandleTypeDef *hi2c){
@@ -102,7 +103,7 @@ void HAL_I2C_MasterRxCpltCallback (I2C_HandleTypeDef *hi2c){
 	float acc_g_x = xyz_data[0] / 64.0;
 	float acc_g_y = xyz_data[2] / 64.0;
 	float acc_g_z = xyz_data[4] / 64.0;
-	string_length = snprintf(string, sizeof(string), "X: %.2f, Y: %.2f, Z: %.2f\n", acc_g_x, acc_g_y, acc_g_z);
+	string_length = snprintf(string, sizeof(string), "X: %.2f g, Y: %.2f g, Z: %.2f g\n", acc_g_x, acc_g_y, acc_g_z);
 	HAL_UART_Transmit_DMA(&huart2, (uint8_t*)string, string_length);
 }
 /* USER CODE END 0 */
@@ -141,8 +142,6 @@ int main(void)
   MX_I2C1_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-
-  //HAL_TIM_Base_Start_IT(&htim2);
 
   if (HAL_I2C_Master_Transmit(&hi2c1, MEMS_WR_ADDRESS, CTRL_REG1, sizeof(CTRL_REG1), timeout) == HAL_OK) {
 	  string_length = snprintf(string, sizeof(string), "LIS2DE found!\n");
