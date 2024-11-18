@@ -60,8 +60,8 @@ all: main-build
 main-build: LED_SPI.elf secondary-outputs
 
 # Tool invocations
-LED_SPI.elf LED_SPI.map: $(OBJS) $(USER_OBJS) C:\Users\teopo\Documents\GitHub\Sensor-Systems-Labs\Lab_9\LED_SPI\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "LED_SPI.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\teopo\Documents\GitHub\Sensor-Systems-Labs\Lab_9\LED_SPI\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="LED_SPI.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+LED_SPI.elf LED_SPI.map: $(OBJS) $(USER_OBJS) C:\Users\Andrea\Documents\GitHub\Sensor-Systems-Labs\Lab_9\LED_SPI\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "LED_SPI.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Andrea\Documents\GitHub\Sensor-Systems-Labs\Lab_9\LED_SPI\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="LED_SPI.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
