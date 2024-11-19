@@ -7,3 +7,7 @@ Lab_5 --> UART DMA receiver; ADC Polling and Interrupt
 Lab_6 --> ADC 3 different samples; ADC LDR brightness sensor
 
 Lab_7 --> I2C LM75 temperature sensor
+
+Lab_8 --> I2C accelerometer; I2C accelerometer with DMA and autoincrement
+
+Lab_9 --> SPI led matrix 7x5, 2 letters alternating
