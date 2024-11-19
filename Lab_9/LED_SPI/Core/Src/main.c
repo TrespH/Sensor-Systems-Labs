@@ -42,6 +42,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 SPI_HandleTypeDef hspi1;
+DMA_HandleTypeDef hdma_spi1_tx;
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
@@ -53,6 +54,7 @@ TIM_HandleTypeDef htim3;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_TIM3_Init(void);
@@ -89,13 +91,16 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
 	if (htim == &htim2) {
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
 		if (i == 5) i = 0;
-		if (letter_flag == 0) HAL_SPI_Transmit(&hspi1, &A_letter[i], Size, 100);
-		if (letter_flag == 1) HAL_SPI_Transmit(&hspi1, &H_letter[i], Size, 100);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
-		i++;
+		if (letter_flag == 0) HAL_SPI_Transmit_DMA(&hspi1, &A_letter[i], Size);
+		else HAL_SPI_Transmit_DMA(&hspi1, &H_letter[i], Size);
 	} else if (htim == &htim3) {
 		letter_flag = !letter_flag;
 	}
+}
+
+void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef * hspi) {
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
+	i++;
 }
 /* USER CODE END 0 */
 
@@ -128,6 +133,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_TIM2_Init();
   MX_SPI1_Init();
   MX_TIM3_Init();
@@ -319,6 +325,22 @@ static void MX_TIM3_Init(void)
   /* USER CODE BEGIN TIM3_Init 2 */
 
   /* USER CODE END TIM3_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA2_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA2_Stream3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA2_Stream3_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA2_Stream3_IRQn);
 
 }
 
