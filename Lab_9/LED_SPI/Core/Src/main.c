@@ -57,45 +57,44 @@ static void MX_TIM2_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
-struct rowcolumn{
+struct rowcolumn {
 	uint8_t row;
 	uint8_t column;
 };
 
-struct rowcolumn A_letter[5]={
+struct rowcolumn A_letter[5] = {
 		{31, 16},
 		{36, 8},
 		{68, 4},
 		{36, 2},
-		{31, 1},
+		{31, 1}
 };
 
-struct rowcolumn H_letter[5]={
+struct rowcolumn H_letter[5] = {
 		{127, 16},
 		{8, 8},
 		{8, 4},
 		{8, 2},
-		{127, 1},
+		{127, 1}
 };
 
 uint16_t Size = 2;
-uint8_t i=0;
-uint8_t letter_flag=1; //A if 0, H if 1
+uint8_t i = 0;
+uint8_t letter_flag = 1; // A if 0, H if 1
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
-	if(htim==&htim2) {
+	if (htim == &htim2) {
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_RESET);
-		if(i==5) i=0;
-		if(letter_flag==0) HAL_SPI_Transmit(&hspi1, &A_letter[i], Size, 100);
-		if(letter_flag==1) HAL_SPI_Transmit(&hspi1, &H_letter[i], Size, 100);
+		if (i == 5) i = 0;
+		if (letter_flag == 0) HAL_SPI_Transmit(&hspi1, &A_letter[i], Size, 100);
+		if (letter_flag == 1) HAL_SPI_Transmit(&hspi1, &H_letter[i], Size, 100);
 		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_6, GPIO_PIN_SET);
 		i++;
-	} else if(htim==&htim3) {
-		if(letter_flag==0) letter_flag=1;
-		if(letter_flag==1) letter_flag=0;
+	} else if (htim == &htim3) {
+		letter_flag = !letter_flag;
 	}
 }
 /* USER CODE END 0 */
@@ -135,6 +134,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
   HAL_TIM_Base_Start_IT(&htim2);
+  HAL_TIM_Base_Start_IT(&htim3);
   /* USER CODE END 2 */
 
   /* Infinite loop */
