@@ -60,8 +60,8 @@ all: main-build
 main-build: SPI_LED_Matrix.elf secondary-outputs
 
 # Tool invocations
-SPI_LED_Matrix.elf SPI_LED_Matrix.map: $(OBJS) $(USER_OBJS) C:\Users\marco\Desktop\git_sensor_local\Sensor-Systems-Labs\LAB_09\SPI_LED_Matrix\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "SPI_LED_Matrix.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\marco\Desktop\git_sensor_local\Sensor-Systems-Labs\LAB_09\SPI_LED_Matrix\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SPI_LED_Matrix.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+SPI_LED_Matrix.elf SPI_LED_Matrix.map: $(OBJS) $(USER_OBJS) C:\Users\lotto\Desktop\SensonSys\Sensor-Systems-Labs\Lab_9\SPI_LED_Matrix\STM32F401RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "SPI_LED_Matrix.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\lotto\Desktop\SensonSys\Sensor-Systems-Labs\Lab_9\SPI_LED_Matrix\STM32F401RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="SPI_LED_Matrix.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
