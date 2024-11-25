@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stdio.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -31,16 +31,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define TEMPO 1000
-#define R0 GPIOC, GPIO_PIN_3
-#define R1 GPIOC, GPIO_PIN_2
-#define R2 GPIOC, GPIO_PIN_13
-#define R3 GPIOC, GPIO_PIN_12
-#define C0 GPIOC, GPIO_PIN_11
-#define C1 GPIOC, GPIO_PIN_10
-#define C2 GPIOC, GPIO_PIN_9
-#define C3 GPIOC, GPIO_PIN_8
-#define LED GPIOA, GPIO_PIN_5
+#define TEMPO 4
+#define TEMPO2 100
 
 /* USER CODE END PD */
 
@@ -51,6 +43,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim2;
+TIM_HandleTypeDef htim3;
 
 UART_HandleTypeDef huart2;
 DMA_HandleTypeDef hdma_usart2_tx;
@@ -65,10 +58,33 @@ static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM2_Init(void);
+static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
-int scan=0;
-int c=0, flag=0;
-char buttons[16]="FEDCBA9876543210";
+typedef struct {
+	GPIO_TypeDef *port;
+	uint16_t pin;
+} Pin_Struct;
+
+const Pin_Struct rows[] = {
+    {GPIOC, GPIO_PIN_3},  // R0
+    {GPIOC, GPIO_PIN_2},  // R1
+    {GPIOC, GPIO_PIN_13}, // R2
+    {GPIOC, GPIO_PIN_12}  // R3
+};
+
+const Pin_Struct cols[] = {
+    {GPIOC, GPIO_PIN_11},  // C0
+    {GPIOC, GPIO_PIN_10},  // C1
+    {GPIOC, GPIO_PIN_9}, // C2
+    {GPIOC, GPIO_PIN_8}  // C3
+};
+
+int scan = 0;
+int c = 0, c_old = -1;
+int flag = 0;
+int pressed_flag = 0;
+int row = 0, col = 0;
+char buttons[16] = "FEDCBA9876543210";
 char string[32];
 int string_length = 0;
 /* USER CODE END PFP */
@@ -77,33 +93,56 @@ int string_length = 0;
 /* USER CODE BEGIN 0 */
 
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
+	if (htim == &htim2) {
+		if (flag == 0) {
+			for (int i = 0; i < 4; i++) {
+				if (i == scan) HAL_GPIO_WritePin(cols[i].port, cols[i].pin, GPIO_PIN_SET);
+				else HAL_GPIO_WritePin(cols[i].port, cols[i].pin, GPIO_PIN_RESET);
+			}
+		}
 
-	if(HAL_GPIO_ReadPin(R0)==GPIO_PIN_RESET) c=scan-1;
-	if(HAL_GPIO_ReadPin(R1)==GPIO_PIN_RESET) c=scan+4-1;
-	if(HAL_GPIO_ReadPin(R2)==GPIO_PIN_RESET) c=scan+8-1;
-	if(HAL_GPIO_ReadPin(R3)==GPIO_PIN_RESET) c=scan+12-1;
-	if(HAL_GPIO_ReadPin(R0)==GPIO_PIN_RESET||HAL_GPIO_ReadPin(R1)==GPIO_PIN_RESET||HAL_GPIO_ReadPin(R2)==GPIO_PIN_RESET||HAL_GPIO_ReadPin(R3)==GPIO_PIN_RESET) flag=1;
+		for (int i = 0; i < 4; i++) {
+			if (HAL_GPIO_ReadPin(rows[i].port, rows[i].pin) == GPIO_PIN_RESET) {
+				if (flag == 0) {
+					flag = 1;
+					row = i;
+					col = scan;
+					if (i == 2) {
+						col = scan - 1;
+						if (scan == 0) col = 3;
+					}
+					c = col + (4*i);
+					HAL_GPIO_WritePin(cols[scan].port, cols[scan].pin, GPIO_PIN_RESET);
+					HAL_GPIO_WritePin(cols[col].port, cols[col].pin, GPIO_PIN_SET);
+					HAL_TIM_Base_Start_IT(&htim3);
+				}
+			}
+		}
 
-	HAL_GPIO_WritePin(C0, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(C1, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(C2, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(C3, GPIO_PIN_RESET);
+		scan++;
+		if (scan == 4) scan = 0;
+	}
 
-	if(scan==4) scan=0;
-	if	(scan==0)	HAL_GPIO_WritePin(C0, GPIO_PIN_SET);
-	else if (scan==1)	HAL_GPIO_WritePin(C1, GPIO_PIN_SET);
-	else if (scan==2)	HAL_GPIO_WritePin(C2, GPIO_PIN_SET);
-	else if (scan==3)	HAL_GPIO_WritePin(C3, GPIO_PIN_SET);
-	scan++;
-
-	/*GPIO_PinState test;
-	test = HAL_GPIO_ReadPin(R2);
-	if (test == GPIO_PIN_SET) HAL_GPIO_WritePin(LED, GPIO_PIN_SET);
-	else HAL_GPIO_WritePin(LED, GPIO_PIN_RESET);*/
-
-	string_length = snprintf(string, sizeof(string), "%c\n", buttons[c]);
-	if(flag==1) HAL_UART_Transmit_DMA(&huart2, (uint8_t*)string, string_length);
-	flag=0;
+	else if (htim == &htim3) {
+		if (HAL_GPIO_ReadPin(rows[row].port, rows[row].pin) == GPIO_PIN_RESET) {
+			if (c != c_old) {
+				string_length = snprintf(string, sizeof(string), "%c pressed\n", buttons[c]);
+				HAL_UART_Transmit_DMA(&huart2, (uint8_t*)string, string_length);
+				c_old = c;
+				pressed_flag = 1;
+			}
+		}
+		else {
+			HAL_TIM_Base_Stop_IT(&htim3);
+			if (pressed_flag == 1) {
+				string_length = snprintf(string, sizeof(string), "%c released\n", buttons[c]);
+				HAL_UART_Transmit_DMA(&huart2, (uint8_t*)string, string_length);
+			}
+			pressed_flag = 0;
+			c_old = -1;
+			flag = 0;
+		}
+	}
 }
 /* USER CODE END 0 */
 
@@ -139,6 +178,7 @@ int main(void)
   MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_TIM2_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim2);
   /* USER CODE END 2 */
@@ -242,6 +282,51 @@ static void MX_TIM2_Init(void)
   /* USER CODE BEGIN TIM2_Init 2 */
 
   /* USER CODE END TIM2_Init 2 */
+
+}
+
+/**
+  * @brief TIM3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM3_Init(void)
+{
+
+  /* USER CODE BEGIN TIM3_Init 0 */
+
+  /* USER CODE END TIM3_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM3_Init 1 */
+
+  /* USER CODE END TIM3_Init 1 */
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 8400-1;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = (TEMPO2*10)-1;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM3_Init 2 */
+
+  /* USER CODE END TIM3_Init 2 */
 
 }
 
