@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "stdio.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -31,7 +31,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define TEMPO 10
+#define TEMPO 1000
 #define R0 GPIOC, GPIO_PIN_3
 #define R1 GPIOC, GPIO_PIN_2
 #define R2 GPIOC, GPIO_PIN_13
@@ -53,6 +53,7 @@
 TIM_HandleTypeDef htim2;
 
 UART_HandleTypeDef huart2;
+DMA_HandleTypeDef hdma_usart2_tx;
 
 /* USER CODE BEGIN PV */
 
@@ -61,22 +62,48 @@ UART_HandleTypeDef huart2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
+static void MX_DMA_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
-
+int scan=0;
+int c=0, flag=0;
+char buttons[16]="FEDCBA9876543210";
+char string[32];
+int string_length = 0;
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
-	GPIO_PinState test;
-	HAL_GPIO_WritePin(C0, GPIO_PIN_SET);
+
+	if(HAL_GPIO_ReadPin(R0)==GPIO_PIN_RESET) c=scan-1;
+	if(HAL_GPIO_ReadPin(R1)==GPIO_PIN_RESET) c=scan+4-1;
+	if(HAL_GPIO_ReadPin(R2)==GPIO_PIN_RESET) c=scan+8-1;
+	if(HAL_GPIO_ReadPin(R3)==GPIO_PIN_RESET) c=scan+12-1;
+	if(HAL_GPIO_ReadPin(R0)==GPIO_PIN_RESET||HAL_GPIO_ReadPin(R1)==GPIO_PIN_RESET||HAL_GPIO_ReadPin(R2)==GPIO_PIN_RESET||HAL_GPIO_ReadPin(R3)==GPIO_PIN_RESET) flag=1;
+
+	HAL_GPIO_WritePin(C0, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(C1, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(C2, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(C3, GPIO_PIN_RESET);
+
+	if(scan==4) scan=0;
+	if	(scan==0)	HAL_GPIO_WritePin(C0, GPIO_PIN_SET);
+	else if (scan==1)	HAL_GPIO_WritePin(C1, GPIO_PIN_SET);
+	else if (scan==2)	HAL_GPIO_WritePin(C2, GPIO_PIN_SET);
+	else if (scan==3)	HAL_GPIO_WritePin(C3, GPIO_PIN_SET);
+	scan++;
+
+	/*GPIO_PinState test;
 	test = HAL_GPIO_ReadPin(R2);
 	if (test == GPIO_PIN_SET) HAL_GPIO_WritePin(LED, GPIO_PIN_SET);
-	else HAL_GPIO_WritePin(LED, GPIO_PIN_RESET);
-	//printf(test);
+	else HAL_GPIO_WritePin(LED, GPIO_PIN_RESET);*/
+
+	string_length = snprintf(string, sizeof(string), "%c\n", buttons[c]);
+	if(flag==1) HAL_UART_Transmit_DMA(&huart2, (uint8_t*)string, string_length);
+	flag=0;
 }
 /* USER CODE END 0 */
 
@@ -109,6 +136,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART2_UART_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
@@ -247,6 +275,22 @@ static void MX_USART2_UART_Init(void)
   /* USER CODE BEGIN USART2_Init 2 */
 
   /* USER CODE END USART2_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_DMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_DMA1_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* DMA1_Stream6_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(DMA1_Stream6_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(DMA1_Stream6_IRQn);
 
 }
 
