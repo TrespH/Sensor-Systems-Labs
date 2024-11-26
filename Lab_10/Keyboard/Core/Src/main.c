@@ -65,82 +65,79 @@ typedef struct {
 	uint16_t pin;
 } Pin_Struct;
 
-const Pin_Struct rows[] = {
+const Pin_Struct ROWS[] = {
     {GPIOC, GPIO_PIN_3},  // R0
     {GPIOC, GPIO_PIN_2},  // R1
     {GPIOC, GPIO_PIN_13}, // R2
     {GPIOC, GPIO_PIN_12}  // R3
 };
 
-const Pin_Struct cols[] = {
+const Pin_Struct COLS[] = {
     {GPIOC, GPIO_PIN_11},  // C0
     {GPIOC, GPIO_PIN_10},  // C1
     {GPIOC, GPIO_PIN_9}, // C2
     {GPIOC, GPIO_PIN_8}  // C3
 };
 
-int scan = 0;
-int c = 0, c_old = -1;
-int flag = 0;
-int pressed_flag = 0;
-int row = 0, col = 0;
-char buttons[16] = "FEDCBA9876543210";
-char string[32];
-int string_length = 0;
+char buttons[16] = "FEDCBA9876543210"; // Keyboard chars to be indexed by 'c' and printed
+int scan = 0; // Current scanning column (0 to 3)
+int c = 0, c_old = -1; // New and previous indexes in 'buttons[]'
+int pressed_flag = 0; // Wether a button has been pressed and not released yet
+int row = 0, col = 0; // Row and Column to be scanned at debouncing timeout
+
+char string[32]; // UART buffer
+int string_length = 0; // UART buffer length
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
-	if (htim == &htim2) {
-		if (flag == 0) {
-			for (int i = 0; i < 4; i++) {
-				if (i == scan) HAL_GPIO_WritePin(cols[i].port, cols[i].pin, GPIO_PIN_SET);
-				else HAL_GPIO_WritePin(cols[i].port, cols[i].pin, GPIO_PIN_RESET);
-			}
-		}
 
-		for (int i = 0; i < 4; i++) {
-			if (HAL_GPIO_ReadPin(rows[i].port, rows[i].pin) == GPIO_PIN_RESET) {
-				if (flag == 0) {
-					flag = 1;
-					row = i;
-					col = scan;
+	if (htim == &htim2) { // Timeout to scan next keyboard's column
+		if (pressed_flag == 0) { // If no button has been presssed (and not released yet)
+
+			for (int i = 0; i < 4; i++) { // Set the column indexed by 'scan' to 1, all others to 0
+				if (i == scan) HAL_GPIO_WritePin(COLS[i].port, COLS[i].pin, GPIO_PIN_SET);
+				else HAL_GPIO_WritePin(COLS[i].port, COLS[i].pin, GPIO_PIN_RESET);
+			}
+
+			for (int i = 0; i < 4; i++) { // Scan all four rows to check any button pressing
+				if (HAL_GPIO_ReadPin(ROWS[i].port, ROWS[i].pin) == GPIO_PIN_RESET) { // RESET <-> button pressed
+					pressed_flag = 1; // Block future columns' and rows' writes and reads
+					row = i; // Save the index of the row to be scanned at debouncing timeout
+
+					// Now we manage the defect of the second row (shifted one column to the right)
+					col = scan; // We want to replace 'scan' with 'col', which may be different in case row 2 is pressed
 					if (i == 2) {
-						col = scan - 1;
-						if (scan == 0) col = 3;
+						col--; // Adjust the column to be scanned, decrementing by 1
+						if (scan == 0) col = 3; // Extreme case in which 'col' would be -1
 					}
-					c = col + (4*i);
-					HAL_GPIO_WritePin(cols[scan].port, cols[scan].pin, GPIO_PIN_RESET);
-					HAL_GPIO_WritePin(cols[col].port, cols[col].pin, GPIO_PIN_SET);
-					HAL_TIM_Base_Start_IT(&htim3);
+					c = col + (4*i); // Expression to calculate the index in 'buttons[]'
+					HAL_GPIO_WritePin(COLS[scan].port, COLS[scan].pin, GPIO_PIN_RESET); // Turn off scan in 'COLS[scan]'
+					HAL_GPIO_WritePin(COLS[col].port, COLS[col].pin, GPIO_PIN_SET); // Turn on scan in 'COLS[col]'
+
+					HAL_TIM_Base_Start_IT(&htim3); // Start the debouncing timer
 				}
 			}
 		}
 
-		scan++;
-		if (scan == 4) scan = 0;
+		scan++; // Increment scanning column
+		if (scan == 4) scan = 0; // Reset 'scan' when reaching the last column
 	}
 
-	else if (htim == &htim3) {
-		if (HAL_GPIO_ReadPin(rows[row].port, rows[row].pin) == GPIO_PIN_RESET) {
-			if (c != c_old) {
-				string_length = snprintf(string, sizeof(string), "%c pressed\n", buttons[c]);
-				HAL_UART_Transmit_DMA(&huart2, (uint8_t*)string, string_length);
-				c_old = c;
-				pressed_flag = 1;
+	else if (htim == &htim3) { // Timeout to check persistence after debouncing
+		if (HAL_GPIO_ReadPin(ROWS[row].port, ROWS[row].pin) == GPIO_PIN_RESET) { // Re-read the button pressing
+			if (c != c_old) { // If new 'c' differs from old one, to avoid repetitions in printing
+				string_length = snprintf(string, sizeof(string), "%c\n", buttons[c]); // Parse buffer for UART
+				HAL_UART_Transmit_DMA(&huart2, (uint8_t*)string, string_length); // Send buffer via UART
+				c_old = c; // Update old value of 'c'
 			}
 		}
-		else {
-			HAL_TIM_Base_Stop_IT(&htim3);
-			if (pressed_flag == 1) {
-				string_length = snprintf(string, sizeof(string), "%c released\n", buttons[c]);
-				HAL_UART_Transmit_DMA(&huart2, (uint8_t*)string, string_length);
-			}
-			pressed_flag = 0;
-			c_old = -1;
-			flag = 0;
+		else { // Button released either before or after timeout
+			HAL_TIM_Base_Stop_IT(&htim3); // Stop timeout callbacks
+			c_old = -1; // Reset to a value which 'c' will never hold
+			pressed_flag = 0; // Allow for future writes on columns, and reads on rows
 		}
 	}
 }
