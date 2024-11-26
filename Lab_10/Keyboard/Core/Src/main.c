@@ -32,7 +32,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define TEMPO 4
-#define TEMPO2 100
+#define TEMPO2 50
 
 /* USER CODE END PD */
 
@@ -82,10 +82,10 @@ const Pin_Struct COLS[] = {
 char buttons[16] = "FEDCBA9876543210"; // Keyboard chars to be indexed by 'c' and printed
 int scan = 0; // Current scanning column (0 to 3)
 int c = 0, c_old = -1; // New and previous indexes in 'buttons[]'
-int pressed_flag = 0; // Wether a button has been pressed and not released yet
+int pressed_flag = 0; // Whether a button has been pressed and not released yet
 int row = 0, col = 0; // Row and Column to be scanned at debouncing timeout
 
-char string[32]; // UART buffer
+char string[3]; // UART buffer
 int string_length = 0; // UART buffer length
 /* USER CODE END PFP */
 
@@ -95,6 +95,7 @@ int string_length = 0; // UART buffer length
 void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
 
 	if (htim == &htim2) { // Timeout to scan next keyboard's column
+
 		if (pressed_flag == 0) { // If no button has been presssed (and not released yet)
 
 			for (int i = 0; i < 4; i++) { // Set the column indexed by 'scan' to 1, all others to 0
@@ -107,15 +108,16 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
 					pressed_flag = 1; // Block future columns' and rows' writes and reads
 					row = i; // Save the index of the row to be scanned at debouncing timeout
 
-					// Now we manage the defect of the second row (shifted one column to the right)
+					// We now manage the defect of the second row (shifted one column to the left)
 					col = scan; // We want to replace 'scan' with 'col', which may be different in case row 2 is pressed
 					if (i == 2) {
 						col--; // Adjust the column to be scanned, decrementing by 1
 						if (scan == 0) col = 3; // Extreme case in which 'col' would be -1
+						HAL_GPIO_WritePin(COLS[scan].port, COLS[scan].pin, GPIO_PIN_RESET); // Turn off scan in 'COLS[scan]'
+						HAL_GPIO_WritePin(COLS[col].port, COLS[col].pin, GPIO_PIN_SET); // Turn on scan in 'COLS[col]'
 					}
+
 					c = col + (4*i); // Expression to calculate the index in 'buttons[]'
-					HAL_GPIO_WritePin(COLS[scan].port, COLS[scan].pin, GPIO_PIN_RESET); // Turn off scan in 'COLS[scan]'
-					HAL_GPIO_WritePin(COLS[col].port, COLS[col].pin, GPIO_PIN_SET); // Turn on scan in 'COLS[col]'
 
 					HAL_TIM_Base_Start_IT(&htim3); // Start the debouncing timer
 				}

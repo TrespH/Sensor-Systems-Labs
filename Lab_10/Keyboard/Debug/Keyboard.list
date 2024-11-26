@@ -21,9 +21,9 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, ALLOC, LOAD, READONLY, DATA
   8 .data         00000070  20000000  08004a28  00006000  2**2
                   CONTENTS, ALLOC, LOAD, DATA
-  9 .bss          000002dc  20000070  08004a98  00006070  2**2
+  9 .bss          000002c0  20000070  08004a98  00006070  2**2
                   ALLOC
- 10 ._user_heap_stack 00000604  2000034c  08004a98  0000634c  2**0
+ 10 ._user_heap_stack 00000600  20000330  08004a98  00006330  2**0
                   ALLOC
  11 .ARM.attributes 00000030  00000000  00000000  00006070  2**0
                   CONTENTS, READONLY
@@ -37,11 +37,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  16 .debug_macro  000159e0  00000000  00000000  000164c5  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000e17f  00000000  00000000  0002bea5  2**0
+ 17 .debug_line   0000e181  00000000  00000000  0002bea5  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    0008bd87  00000000  00000000  0003a024  2**0
+ 18 .debug_str    0008bd86  00000000  00000000  0003a026  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000043  00000000  00000000  000c5dab  2**0
+ 19 .comment      00000043  00000000  00000000  000c5dac  2**0
                   CONTENTS, READONLY
  20 .debug_frame  00003940  00000000  00000000  000c5df0  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
@@ -421,6 +421,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
  800057a:	4a6e      	ldr	r2, [pc, #440]	@ (8000734 <HAL_TIM_PeriodElapsedCallback+0x1c4>)
  800057c:	4293      	cmp	r3, r2
  800057e:	f040 8095 	bne.w	80006ac <HAL_TIM_PeriodElapsedCallback+0x13c>
+
 		if (pressed_flag == 0) { // If no button has been presssed (and not released yet)
  8000582:	4b6d      	ldr	r3, [pc, #436]	@ (8000738 <HAL_TIM_PeriodElapsedCallback+0x1c8>)
  8000584:	681b      	ldr	r3, [r3, #0]
@@ -498,7 +499,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
  800060c:	68bb      	ldr	r3, [r7, #8]
  800060e:	6013      	str	r3, [r2, #0]
 
-					// Now we manage the defect of the second row (shifted one column to the right)
+					// We now manage the defect of the second row (shifted one column to the left)
 					col = scan; // We want to replace 'scan' with 'col', which may be different in case row 2 is pressed
  8000610:	4b4a      	ldr	r3, [pc, #296]	@ (800073c <HAL_TIM_PeriodElapsedCallback+0x1cc>)
  8000612:	681b      	ldr	r3, [r3, #0]
@@ -507,7 +508,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
 					if (i == 2) {
  8000618:	68bb      	ldr	r3, [r7, #8]
  800061a:	2b02      	cmp	r3, #2
- 800061c:	d10b      	bne.n	8000636 <HAL_TIM_PeriodElapsedCallback+0xc6>
+ 800061c:	d129      	bne.n	8000672 <HAL_TIM_PeriodElapsedCallback+0x102>
 						col--; // Adjust the column to be scanned, decrementing by 1
  800061e:	4b4b      	ldr	r3, [pc, #300]	@ (800074c <HAL_TIM_PeriodElapsedCallback+0x1dc>)
  8000620:	681b      	ldr	r3, [r3, #0]
@@ -522,43 +523,44 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
  8000630:	4b46      	ldr	r3, [pc, #280]	@ (800074c <HAL_TIM_PeriodElapsedCallback+0x1dc>)
  8000632:	2203      	movs	r2, #3
  8000634:	601a      	str	r2, [r3, #0]
+						HAL_GPIO_WritePin(COLS[scan].port, COLS[scan].pin, GPIO_PIN_RESET); // Turn off scan in 'COLS[scan]'
+ 8000636:	4b41      	ldr	r3, [pc, #260]	@ (800073c <HAL_TIM_PeriodElapsedCallback+0x1cc>)
+ 8000638:	681b      	ldr	r3, [r3, #0]
+ 800063a:	4a41      	ldr	r2, [pc, #260]	@ (8000740 <HAL_TIM_PeriodElapsedCallback+0x1d0>)
+ 800063c:	f852 0033 	ldr.w	r0, [r2, r3, lsl #3]
+ 8000640:	4b3e      	ldr	r3, [pc, #248]	@ (800073c <HAL_TIM_PeriodElapsedCallback+0x1cc>)
+ 8000642:	681b      	ldr	r3, [r3, #0]
+ 8000644:	4a3e      	ldr	r2, [pc, #248]	@ (8000740 <HAL_TIM_PeriodElapsedCallback+0x1d0>)
+ 8000646:	00db      	lsls	r3, r3, #3
+ 8000648:	4413      	add	r3, r2
+ 800064a:	889b      	ldrh	r3, [r3, #4]
+ 800064c:	2200      	movs	r2, #0
+ 800064e:	4619      	mov	r1, r3
+ 8000650:	f001 fb58 	bl	8001d04 <HAL_GPIO_WritePin>
+						HAL_GPIO_WritePin(COLS[col].port, COLS[col].pin, GPIO_PIN_SET); // Turn on scan in 'COLS[col]'
+ 8000654:	4b3d      	ldr	r3, [pc, #244]	@ (800074c <HAL_TIM_PeriodElapsedCallback+0x1dc>)
+ 8000656:	681b      	ldr	r3, [r3, #0]
+ 8000658:	4a39      	ldr	r2, [pc, #228]	@ (8000740 <HAL_TIM_PeriodElapsedCallback+0x1d0>)
+ 800065a:	f852 0033 	ldr.w	r0, [r2, r3, lsl #3]
+ 800065e:	4b3b      	ldr	r3, [pc, #236]	@ (800074c <HAL_TIM_PeriodElapsedCallback+0x1dc>)
+ 8000660:	681b      	ldr	r3, [r3, #0]
+ 8000662:	4a37      	ldr	r2, [pc, #220]	@ (8000740 <HAL_TIM_PeriodElapsedCallback+0x1d0>)
+ 8000664:	00db      	lsls	r3, r3, #3
+ 8000666:	4413      	add	r3, r2
+ 8000668:	889b      	ldrh	r3, [r3, #4]
+ 800066a:	2201      	movs	r2, #1
+ 800066c:	4619      	mov	r1, r3
+ 800066e:	f001 fb49 	bl	8001d04 <HAL_GPIO_WritePin>
 					}
+
 					c = col + (4*i); // Expression to calculate the index in 'buttons[]'
- 8000636:	68bb      	ldr	r3, [r7, #8]
- 8000638:	009a      	lsls	r2, r3, #2
- 800063a:	4b44      	ldr	r3, [pc, #272]	@ (800074c <HAL_TIM_PeriodElapsedCallback+0x1dc>)
- 800063c:	681b      	ldr	r3, [r3, #0]
- 800063e:	4413      	add	r3, r2
- 8000640:	4a43      	ldr	r2, [pc, #268]	@ (8000750 <HAL_TIM_PeriodElapsedCallback+0x1e0>)
- 8000642:	6013      	str	r3, [r2, #0]
-					HAL_GPIO_WritePin(COLS[scan].port, COLS[scan].pin, GPIO_PIN_RESET); // Turn off scan in 'COLS[scan]'
- 8000644:	4b3d      	ldr	r3, [pc, #244]	@ (800073c <HAL_TIM_PeriodElapsedCallback+0x1cc>)
- 8000646:	681b      	ldr	r3, [r3, #0]
- 8000648:	4a3d      	ldr	r2, [pc, #244]	@ (8000740 <HAL_TIM_PeriodElapsedCallback+0x1d0>)
- 800064a:	f852 0033 	ldr.w	r0, [r2, r3, lsl #3]
- 800064e:	4b3b      	ldr	r3, [pc, #236]	@ (800073c <HAL_TIM_PeriodElapsedCallback+0x1cc>)
- 8000650:	681b      	ldr	r3, [r3, #0]
- 8000652:	4a3b      	ldr	r2, [pc, #236]	@ (8000740 <HAL_TIM_PeriodElapsedCallback+0x1d0>)
- 8000654:	00db      	lsls	r3, r3, #3
- 8000656:	4413      	add	r3, r2
- 8000658:	889b      	ldrh	r3, [r3, #4]
- 800065a:	2200      	movs	r2, #0
- 800065c:	4619      	mov	r1, r3
- 800065e:	f001 fb51 	bl	8001d04 <HAL_GPIO_WritePin>
-					HAL_GPIO_WritePin(COLS[col].port, COLS[col].pin, GPIO_PIN_SET); // Turn on scan in 'COLS[col]'
- 8000662:	4b3a      	ldr	r3, [pc, #232]	@ (800074c <HAL_TIM_PeriodElapsedCallback+0x1dc>)
- 8000664:	681b      	ldr	r3, [r3, #0]
- 8000666:	4a36      	ldr	r2, [pc, #216]	@ (8000740 <HAL_TIM_PeriodElapsedCallback+0x1d0>)
- 8000668:	f852 0033 	ldr.w	r0, [r2, r3, lsl #3]
- 800066c:	4b37      	ldr	r3, [pc, #220]	@ (800074c <HAL_TIM_PeriodElapsedCallback+0x1dc>)
- 800066e:	681b      	ldr	r3, [r3, #0]
- 8000670:	4a33      	ldr	r2, [pc, #204]	@ (8000740 <HAL_TIM_PeriodElapsedCallback+0x1d0>)
- 8000672:	00db      	lsls	r3, r3, #3
- 8000674:	4413      	add	r3, r2
- 8000676:	889b      	ldrh	r3, [r3, #4]
- 8000678:	2201      	movs	r2, #1
- 800067a:	4619      	mov	r1, r3
- 800067c:	f001 fb42 	bl	8001d04 <HAL_GPIO_WritePin>
+ 8000672:	68bb      	ldr	r3, [r7, #8]
+ 8000674:	009a      	lsls	r2, r3, #2
+ 8000676:	4b35      	ldr	r3, [pc, #212]	@ (800074c <HAL_TIM_PeriodElapsedCallback+0x1dc>)
+ 8000678:	681b      	ldr	r3, [r3, #0]
+ 800067a:	4413      	add	r3, r2
+ 800067c:	4a34      	ldr	r2, [pc, #208]	@ (8000750 <HAL_TIM_PeriodElapsedCallback+0x1e0>)
+ 800067e:	6013      	str	r3, [r2, #0]
 
 					HAL_TIM_Base_Start_IT(&htim3); // Start the debouncing timer
  8000680:	4834      	ldr	r0, [pc, #208]	@ (8000754 <HAL_TIM_PeriodElapsedCallback+0x1e4>)
@@ -630,7 +632,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
  80006e8:	4a1c      	ldr	r2, [pc, #112]	@ (800075c <HAL_TIM_PeriodElapsedCallback+0x1ec>)
  80006ea:	5cd3      	ldrb	r3, [r2, r3]
  80006ec:	4a1c      	ldr	r2, [pc, #112]	@ (8000760 <HAL_TIM_PeriodElapsedCallback+0x1f0>)
- 80006ee:	2120      	movs	r1, #32
+ 80006ee:	2103      	movs	r1, #3
  80006f0:	481c      	ldr	r0, [pc, #112]	@ (8000764 <HAL_TIM_PeriodElapsedCallback+0x1f4>)
  80006f2:	f003 fc85 	bl	8004000 <sniprintf>
  80006f6:	4603      	mov	r3, r0
@@ -681,7 +683,7 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim) {
  800075c:	20000000 	.word	0x20000000
  8000760:	08004980 	.word	0x08004980
  8000764:	200001d8 	.word	0x200001d8
- 8000768:	200001f8 	.word	0x200001f8
+ 8000768:	200001dc 	.word	0x200001dc
  800076c:	2000011c 	.word	0x2000011c
 
 08000770 <main>:
@@ -1027,7 +1029,7 @@ static void MX_TIM3_Init(void)
  800093e:	609a      	str	r2, [r3, #8]
   htim3.Init.Period = (TEMPO2*10)-1;
  8000940:	4b18      	ldr	r3, [pc, #96]	@ (80009a4 <MX_TIM3_Init+0x94>)
- 8000942:	f240 32e7 	movw	r2, #999	@ 0x3e7
+ 8000942:	f240 12f3 	movw	r2, #499	@ 0x1f3
  8000946:	60da      	str	r2, [r3, #12]
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
  8000948:	4b16      	ldr	r3, [pc, #88]	@ (80009a4 <MX_TIM3_Init+0x94>)
@@ -2001,8 +2003,8 @@ void USART2_IRQHandler(void)
  8000e36:	bd80      	pop	{r7, pc}
  8000e38:	20018000 	.word	0x20018000
  8000e3c:	00000400 	.word	0x00000400
- 8000e40:	200001fc 	.word	0x200001fc
- 8000e44:	20000350 	.word	0x20000350
+ 8000e40:	200001e0 	.word	0x200001e0
+ 8000e44:	20000330 	.word	0x20000330
 
 08000e48 <SystemInit>:
  8000e48:	b480      	push	{r7}
@@ -2057,7 +2059,7 @@ void USART2_IRQHandler(void)
  8000eac:	20000070 	.word	0x20000070
  8000eb0:	08004a28 	.word	0x08004a28
  8000eb4:	20000070 	.word	0x20000070
- 8000eb8:	2000034c 	.word	0x2000034c
+ 8000eb8:	20000330 	.word	0x20000330
 
 08000ebc <ADC_IRQHandler>:
  8000ebc:	e7fe      	b.n	8000ebc <ADC_IRQHandler>
@@ -2150,7 +2152,7 @@ void USART2_IRQHandler(void)
  8000f80:	4770      	bx	lr
  8000f82:	bf00      	nop
  8000f84:	2000001c 	.word	0x2000001c
- 8000f88:	20000200 	.word	0x20000200
+ 8000f88:	200001e4 	.word	0x200001e4
 
 08000f8c <HAL_GetTick>:
  8000f8c:	b480      	push	{r7}
@@ -2162,7 +2164,7 @@ void USART2_IRQHandler(void)
  8000f98:	f85d 7b04 	ldr.w	r7, [sp], #4
  8000f9c:	4770      	bx	lr
  8000f9e:	bf00      	nop
- 8000fa0:	20000200 	.word	0x20000200
+ 8000fa0:	200001e4 	.word	0x200001e4
 
 08000fa4 <__NVIC_SetPriorityGrouping>:
  8000fa4:	b480      	push	{r7}
@@ -7688,7 +7690,7 @@ void USART2_IRQHandler(void)
  800415a:	e7ca      	b.n	80040f2 <_free_r+0x22>
  800415c:	bd38      	pop	{r3, r4, r5, pc}
  800415e:	bf00      	nop
- 8004160:	20000348 	.word	0x20000348
+ 8004160:	2000032c 	.word	0x2000032c
 
 08004164 <sbrk_aligned>:
  8004164:	b570      	push	{r4, r5, r6, lr}
@@ -7718,7 +7720,7 @@ void USART2_IRQHandler(void)
  800419e:	d1f2      	bne.n	8004186 <sbrk_aligned+0x22>
  80041a0:	e7ef      	b.n	8004182 <sbrk_aligned+0x1e>
  80041a2:	bf00      	nop
- 80041a4:	20000344 	.word	0x20000344
+ 80041a4:	20000328 	.word	0x20000328
 
 080041a8 <_malloc_r>:
  80041a8:	e92d 43f8 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, lr}
@@ -7828,19 +7830,19 @@ void USART2_IRQHandler(void)
  800429e:	6005      	str	r5, [r0, #0]
  80042a0:	e7d6      	b.n	8004250 <_malloc_r+0xa8>
  80042a2:	bf00      	nop
- 80042a4:	20000348 	.word	0x20000348
+ 80042a4:	2000032c 	.word	0x2000032c
 
 080042a8 <__malloc_lock>:
  80042a8:	4801      	ldr	r0, [pc, #4]	@ (80042b0 <__malloc_lock+0x8>)
  80042aa:	f7ff bf0f 	b.w	80040cc <__retarget_lock_acquire_recursive>
  80042ae:	bf00      	nop
- 80042b0:	20000340 	.word	0x20000340
+ 80042b0:	20000324 	.word	0x20000324
 
 080042b4 <__malloc_unlock>:
  80042b4:	4801      	ldr	r0, [pc, #4]	@ (80042bc <__malloc_unlock+0x8>)
  80042b6:	f7ff bf0a 	b.w	80040ce <__retarget_lock_release_recursive>
  80042ba:	bf00      	nop
- 80042bc:	20000340 	.word	0x20000340
+ 80042bc:	20000324 	.word	0x20000324
 
 080042c0 <__ssputs_r>:
  80042c0:	e92d 47f0 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
@@ -8492,7 +8494,7 @@ void USART2_IRQHandler(void)
  80048d6:	b103      	cbz	r3, 80048da <_sbrk_r+0x1a>
  80048d8:	6023      	str	r3, [r4, #0]
  80048da:	bd38      	pop	{r3, r4, r5, pc}
- 80048dc:	2000033c 	.word	0x2000033c
+ 80048dc:	20000320 	.word	0x20000320
 
 080048e0 <memcpy>:
  80048e0:	440a      	add	r2, r1
