@@ -32,7 +32,7 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define TEMPO 4
-#define TEMPO2 50
+#define TEMPO2 20
 
 /* USER CODE END PD */
 
