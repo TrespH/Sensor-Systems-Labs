@@ -1,0 +1,10 @@
+20:17:00 **** Incremental Build of configuration Debug for project 2c_play_a_song_snap ****
+make -j28 all 
+arm-none-eabi-size  2c_play_a_song_snap.elf 
+   text	   data	    bss	    dec	    hex	filename
+  12416	    212	   1716	  14344	   3808	2c_play_a_song_snap.elf
+Finished building: default.size.stdout
+ 
+
+20:17:01 Build Finished. 0 errors, 0 warnings. (took 263ms)
+
