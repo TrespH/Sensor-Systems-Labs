@@ -67,7 +67,7 @@ static void MX_TIM3_Init(void);
 int last_tick, tick, delta;
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	switch(GPIO_Pin) {
+	switch (GPIO_Pin) {
 		 case GPIO_PIN_13: {
             //if (HAL_GPIO_ReadPin(BluePB) == GPIO_PIN_RESET) flag = !flag;
 			//HAL_GPIO_WritePin(LD2, flag);
@@ -274,7 +274,7 @@ static void MX_TIM3_Init(void)
   {
     Error_Handler();
   }
-  sConfigOC.Pulse = 0;
+  sConfigOC.Pulse = 4999;
   if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
   {
     Error_Handler();

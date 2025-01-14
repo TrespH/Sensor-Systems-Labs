@@ -43,6 +43,7 @@
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
+
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 
@@ -98,6 +99,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+	lcd_clear();
 	if (huart == &huart2) {
 		HAL_UART_Receive_IT(&huart2, &rx_char, 1);
 		snprintf(string2, sizeof(string), "IR send: %c", rx_char);
@@ -156,7 +158,7 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   lcd_initialize();
-  lcd_backlight_ON ();
+  //lcd_backlight_ON();
   lcd_println("waiting char", 0);
   lcd_println("from pc", 1);
   HAL_UART_Receive_IT(&huart2, &rx_char, 1);

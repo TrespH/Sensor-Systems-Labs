@@ -53,7 +53,6 @@ uint8_t LM75_WR_ADDRESS = 0b10010000; //LM75 write address
 uint8_t LM75_RD_ADDRESS = 0b10010001; //LM75 read address
 uint8_t LM75_TEMP_REGISTER   = 0x00;       //Address where the LM75 temperature value can be found
 uint8_t data[2]  = {0}; //I2C returned data
-uint8_t data_old = 0;   //This variable is needed to solve the LM75B bug, it will store the old decimal part of the temperature
 char string[32];		 //it contains the string that will be sent via UART
 int  string_length = 0;  //initial string length
 int16_t concat_data = 0; //Variable to store the arranged value of the 11 bit temperature
@@ -86,18 +85,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
 void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
 	if (hi2c->Instance == I2C1) {
-		/*data_old = data[1]; // Comment this if you're using an LM75B-family chip
-		concat_data = ((data[0] << 3) | (data_old >> 5)); // Arranging a new 11-bit word
-		if (data[0] & 0x80) { // Check if the sign bit in the first byte is 1 (negative numbers)
-			concat_data = concat_data | 0b1111100000000000;  // Sign extend for negative numbers
-			temperature = -((~(concat_data) + 1) * 0.125);   // 2's complement for negative value
-		} else
-			temperature = (concat_data * 0.125);  // Positive value
-
-		// Transmit the data over UART
-		string_length = snprintf(string, sizeof(string), "Temperature: %.3f %cC \n", temperature, 176);
-		HAL_UART_Transmit_DMA(&huart2, string, string_length);*/
-
 		// ---------------- LM75A Sensor code ----------------- //
 		concat_data = data[0] << 8 | data[1];
 		// --------------------------------------------------- //
@@ -116,19 +103,6 @@ void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c) {
 		HAL_UART_Transmit_DMA(&huart2, string, string_length);
 	}
 }
-/*
-void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c) {
-    if (hi2c->Instance == I2C1) {
-        //HAL_UART_Transmit(&huart2, (uint8_t *)"I2C Error!\n", 11, HAL_MAX_DELAY);
-    }
-}
-
-void HAL_DMA_ErrorCallback(DMA_HandleTypeDef *hdma) {
-    if (hdma->Instance == DMA1_Stream0) {  // Replace with the correct stream if needed
-        //HAL_UART_Transmit(&huart2, (uint8_t *)"DMA Error!\n", 11, HAL_MAX_DELAY);
-    }
-}
-*/
 
 /* USER CODE END 0 */
 

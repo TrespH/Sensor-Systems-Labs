@@ -1,0 +1,46 @@
+Questions Sensor System: 
+(30 min for the first lab part, then 10-15 min for the questions on lab, then 15-20 min for the questions on theory)
+
+//FIRST ORAL
+//LAB 
+-IR: read the temperature sensor, send the value with IR, receive it and show it on Display
+	why did you enable the scan conversion mode?
+	why do you need PWM for this kind of communication? -> to do modulation
+	is the USART that need modulation? No, it's the optical communication
+	Why do we need modulation? to prevent interference
+	To transmit with the LED, how many timers do you use?
+	why we don't use USART also to manage the sending of the data with the IR? we cannot use directly the USART 
+		is there a smarter way to design the hardware pcb to also exploit the usart?
+//THEORY 
+-Describe the infrared temperature sensor
+	what is the relation between the power and the temperature of the object? is it a linear dependency? do you remember the equation?
+	do objects with lower temperature have a peak of emission at lower or higher frequency? at higher wavelenght because they are less energetic
+	Describe how to implement the infrared sensor
+-Quantum detectors are similar to another type of detector that we used. the physical structure is identical and just the material change. which is it? The photodiodes (is a PN Junction made with silicon)
+	why i cannot use the photodiode made in silicon for detection?
+-why in the Bolometer, we say that it's a 2 step convertion?
+	Bolomiter is a contact temperature sensor, instead infrared is used in non contact. Describe the structure of the bolomiter
+
+//SECOND ORAL
+//LAB
+-Acquire Potentiometer with ADC: produce a sound proportional to the Potentiometer value
+	How do we implement the timer, what are the main component of it? Draw it.
+	which is the input and the output of the prescaler?
+	we mentioned the counter, how do we generate a square wave? capture and compare register, duty cycle, ecc...
+//THEORY
+-Describe parameters that are used to describe sensor in general, and say the parameters for a sensor in particular.
+	Parameter of the termocouple
+	Interval and differential non-linearity
+	Can you make an example of a sensor that can have high or low accuracy? if you measure the temperature at different times it can provide different measures
+-Describe the importance of transfer function in microphones
+-Describe the dinamic range: it is a relation
+	I have a minimum amplitude that i can measure, what is the minimum?
+-Which is the maximum signal and which is the noise?
+
+
+//just to give you an idea of the GRADE:
+LAB: 25 because he did all the code correctly, but there was a small problem that didn't allow it to work
+THEORY: 26 because he answered everything but sometimes he needed some help in recognizing the sensors 
++2 points for the lab part
+Final grade: (25+26)/2 + 2 = 27
+	

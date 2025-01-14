@@ -64,10 +64,8 @@ TIM_HandleTypeDef htim1;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-struct note score[]={
-
+struct note score[] = {
 		// --- London Bridge is Falling Down --- //
-
 		{_SOL4, 6},
 		{_LA4, 2},
 		{_SOL4, 4},
@@ -92,60 +90,7 @@ struct note score[]={
 		{_SOL4, 8},
 		{_MI4, 4},
 		{_DO4, 12},
-
 		{PAUSA, 2} //This terminates the song, we put 2 but whatever value is enough to avoid loops
-
-		// ------------------------------------- //
-
-		// ----------- An other Song ---------- //
-
-		/*
-		{_MI4, 4},
-		{_FAD4, 4},
-		{_SOL4, 6},
-		{_FAD4, 2},
-		{_MI4, 4},
-		{_LA4, 4},
-		{_SOL4, 4},
-		{_FAD4, 4},
-		{_SOL4, 6},
-		{_FAD4, 2},
-		{_MI4, 4},
-
-		{PAUSA, 4},
-
-		{_MI4, 4},
-		{_FAD4, 4},
-		{_SOL4, 6},
-		{_FAD4, 2},
-		{_MI4, 4},
-		{_LA4, 4},
-		{_SOL4, 4},
-		{_FAD4, 4},
-		{_SI4, 12},
-		{_DO4, 8},
-		{_SI4, 4},
-		{_LA4, 6},
-		{_SOL4, 2},
-		{_FAD4, 4},
-		{_SI4, 8},
-		{_LA4, 4},
-		{_SOL4, 6},
-		{_FAD4, 2},
-		{_MI4, 4},
-		{_FAD4, 8},
-		{_SOL4, 4},
-		{_FAD4, 8},
-		{_SOL4, 4},
-		{_FAD4, 8},
-		{_MI4, 4},
-		{_FAD4, 12},
-
-		{PAUSA, 2}
-		*/
-
-		// ------------------------------------- //
-
 };
 /* USER CODE END PV */
 
@@ -161,7 +106,7 @@ static void MX_TIM1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-void playnote(struct note note_playing){
+void playnote(struct note note_playing) {
 
 	  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
 	  TIM_MasterConfigTypeDef sMasterConfig = {0};
@@ -303,6 +248,8 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
 
+  /* USER CODE END 2 */
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -381,9 +328,9 @@ static void MX_TIM1_Init(void)
 
   /* USER CODE END TIM1_Init 1 */
   htim1.Instance = TIM1;
-  htim1.Init.Prescaler = 99;
+  htim1.Init.Prescaler = 0;
   htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim1.Init.Period = 1909;
+  htim1.Init.Period = 65535;
   htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim1.Init.RepetitionCounter = 0;
   htim1.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -407,7 +354,7 @@ static void MX_TIM1_Init(void)
     Error_Handler();
   }
   sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 954;
+  sConfigOC.Pulse = 0;
   sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
   sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
   sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
@@ -429,6 +376,10 @@ static void MX_TIM1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM1_Init 2 */
+
+	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+	  HAL_Delay(note_playing.duration*TEMPO);
+	  HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
 
   /* USER CODE END TIM1_Init 2 */
   HAL_TIM_MspPostInit(&htim1);
@@ -501,21 +452,15 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
 
-
   /*Configure GPIO pin : PA8 */
-
   GPIO_InitStruct.Pin = GPIO_PIN_8;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-
   HAL_NVIC_SetPriority(EXTI9_5_IRQn, 1, 0);
-
   HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
-
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */

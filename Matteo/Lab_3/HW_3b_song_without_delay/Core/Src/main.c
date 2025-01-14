@@ -26,7 +26,7 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-struct note{
+struct note {
 	int tone;
 	int duration;
 };
@@ -34,22 +34,23 @@ struct note{
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define _DO4 3205
-#define _DOD4 3031
-#define _RE4 2856
-#define _RED4 2699
-#define _MI4 2544
-#define _FA4 2405
-#define _FAD4 2269
-#define _SOL4 2141
-#define _SOLD4 2141
-#define _LA4 1908
-#define _LAD4 1801
-#define _SI4 1699
-
+#define PRESCALER 100
+#define TIM_F 84000000/PRESCALER
+#define _DO4 TIM_F/262
+#define _DOD4 TIM_F/277
+#define _RE4 TIM_F/294
+#define _RED4 TIM_F/311
+#define _MI4 TIM_F/330
+#define _FA4 TIM_F/349
+#define _FAD4 TIM_F/370
+#define _SOL4 TIM_F/392
+#define _SOLD4 TIM_F/415
+#define _LA4 TIM_F/440
+#define _LAD4 TIM_F/466
+#define _SI4 TIM_F/494
 #define PAUSA 999999	//PAUSA has been added to add pause and compose more complex songs,
 						//it has been added also for terminate a song without any sound not to trigger the microphone in loop
-#define TEMPO 75
+#define TEMPO 100
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -60,11 +61,11 @@ struct note{
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim2;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-struct note score[]={
-
+struct note score[] = {
 		// --- London Bridge is Falling Down --- //
 		{_SOL4, 6},
 		{_LA4, 2},
@@ -90,60 +91,7 @@ struct note score[]={
 		{_SOL4, 8},
 		{_MI4, 4},
 		{_DO4, 12},
-
 		{PAUSA, 2} //This terminates the song, we put 2 but whatever value is enough to avoid loops
-
-		// ------------------------------------- //
-
-		// ----------- An other Song ---------- //
-
-		/*
-		{_MI4, 4},
-		{_FAD4, 4},
-		{_SOL4, 6},
-		{_FAD4, 2},
-		{_MI4, 4},
-		{_LA4, 4},
-		{_SOL4, 4},
-		{_FAD4, 4},
-		{_SOL4, 6},
-		{_FAD4, 2},
-		{_MI4, 4},
-
-		{PAUSA, 4},
-
-		{_MI4, 4},
-		{_FAD4, 4},
-		{_SOL4, 6},
-		{_FAD4, 2},
-		{_MI4, 4},
-		{_LA4, 4},
-		{_SOL4, 4},
-		{_FAD4, 4},
-		{_SI4, 12},
-		{_DO4, 8},
-		{_SI4, 4},
-		{_LA4, 6},
-		{_SOL4, 2},
-		{_FAD4, 4},
-		{_SI4, 8},
-		{_LA4, 4},
-		{_SOL4, 6},
-		{_FAD4, 2},
-		{_MI4, 4},
-		{_FAD4, 8},
-		{_SOL4, 4},
-		{_FAD4, 8},
-		{_SOL4, 4},
-		{_FAD4, 8},
-		{_MI4, 4},
-		{_FAD4, 12},
-
-		{PAUSA, 2}
-		*/
-
-		// ------------------------------------- //
-
 };
 /* USER CODE END PV */
 
@@ -165,15 +113,14 @@ int note_playing_flag;
 int current_note_index= sizeof(score)/sizeof(score[0]);
 
 
-void playnote(struct note note_playing){
-
+void playnote(struct note note_playing) {
 	  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
 	  TIM_MasterConfigTypeDef sMasterConfig = {0};
 	  TIM_OC_InitTypeDef sConfigOC = {0};
 	  TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
 
 	  htim1.Instance = TIM1;
-	  htim1.Init.Prescaler = 99;
+	  htim1.Init.Prescaler = PRESCALER-1;
 	  htim1.Init.CounterMode = TIM_COUNTERMODE_UP;
 	  htim1.Init.Period = note_playing.tone;
 	  htim1.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -188,7 +135,7 @@ void playnote(struct note note_playing){
 	  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
 	  if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK) Error_Handler();
 	  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-	  sConfigOC.Pulse = note_playing.tone/2;
+	  sConfigOC.Pulse = note_playing.tone/2; // 50% Duty Cycle for correct sound generation
 	  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
 	  sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
 	  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
@@ -210,17 +157,16 @@ void playnote(struct note note_playing){
 	  /* USER CODE END TIM1_Init 2 */
 }
 
-void playsong(){
+void playsong() {
 	note_playing_flag = 0;
 	current_note_index = 0;
 	playnote(score[current_note_index]);
 }
 
-void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
-{
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 	if (htim == &htim2) {
 		note_playing_flag--;
-		if (note_playing_flag == 0) {	//if note duration has been entirely played
+		if (note_playing_flag == 0) {	// If note duration has been entirely played
 			HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_2);
 			current_note_index++;
 			if (current_note_index < sizeof(score)/sizeof(score[0]))
@@ -229,15 +175,10 @@ void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef *htim)
 	}
 }
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
-	switch(GPIO_Pin)
-	{
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+	switch (GPIO_Pin) {
 		case GPIO_PIN_8:
-
-			if (current_note_index >= sizeof(score)/sizeof(score[0]))
-			playsong();
-
+			if (current_note_index >= sizeof(score)/sizeof(score[0])) playsong();
 			__HAL_GPIO_EXTI_CLEAR_IT(GPIO_Pin);
 			break;
 		default: break;
@@ -280,7 +221,6 @@ int main(void)
   MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT (&htim2);
-//provaconflict
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -409,8 +349,8 @@ static void MX_TIM1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN TIM1_Init 2 */
-
-
+	  HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_2);
+	  note_playing_flag = note_playing.duration;
   /* USER CODE END TIM1_Init 2 */
   HAL_TIM_MspPostInit(&htim1);
 
@@ -437,10 +377,9 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 8400-1;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = TEMPO*10;
+  htim2.Init.Period = 750;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
   {
     Error_Handler();

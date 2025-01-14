@@ -41,6 +41,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 TIM_HandleTypeDef htim2;
+
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
@@ -122,7 +123,6 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_TIM2_Init();
-
   /* USER CODE BEGIN 2 */
   lcd_initialize();
   //lcd_backlight_ON(); // Useless, done by lcd_initialize()

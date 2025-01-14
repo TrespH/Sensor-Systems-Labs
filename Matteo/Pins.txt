@@ -1,7 +1,7 @@
 Nucleo LED2 - PA5 (GPIOA) (GPIO_Output)
 Nucleo User Button - PC13 (GPIOC) (EXTI)
 Microphone - PA8 (GPIOC) (EXTI)
-RGB - PB0,PB4,PB5
+RGB - PB0, PB4, PB5
 Speaker - PA9 (GPIO_Output)
 LCD_BL - PA4 (GPIO_Output)
 LCD_E - PB1 (GPIO_Output)
@@ -25,5 +25,5 @@ C2 - PC9 (GPIO_Output)
 C3 - PC8 (GPIO_Output)
 ENCODER_A - PC7 (TIM3_CH2)
 ENCODER_B - PC6 (TIM3_CH1)
-IR_DRV (LED) - PB10 (TIM2_CH3)
+IR_DRV (LED) - PB10 (TIM2_CH3/USART1_TX)
 IR_IN - PA10 (TIM1_CH3/USART1_RX)

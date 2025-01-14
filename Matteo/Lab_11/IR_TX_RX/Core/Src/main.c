@@ -61,7 +61,7 @@ static void MX_TIM10_Init(void);
 char string[64] = {0}; // Where the character will be stored and outputted
 char RX_byte, RX_byte2 = 0; // Received bytes
 uint8_t BaudElapsedFlag = 0; // Check if the bit has been sent (during baud duration)
-int USART_received = 0;
+int IR_send = 0;
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -100,7 +100,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
 	if (huart == &huart2) {
 		HAL_UART_Receive_IT(&huart2, &RX_byte2, 1);
-		USART_received = 1;
+		IR_send = 1;
 	}
 }
 /* USER CODE END 0 */
@@ -147,8 +147,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	if (USART_received) {
-		USART_received = 0;
+	if (IR_send) {
+		IR_send = 0;
 		UART_IR_sendByte(RX_byte2);
 	}
     /* USER CODE END WHILE */
