@@ -1,4 +1,4 @@
-.docx
-**/Drivers/
-**/Debug/
-**/.settings/
+*.docx
+Drivers/
+Debug/
+.settings/
